@@ -54,18 +54,17 @@ abstract class AppDatabase: RoomDatabase() {
     abstract fun bodyMeasurementDao(): BodyMeasurementDao
     abstract fun syncQueueDao(): SyncQueueDao
 
-    object AppDb{
-        private var db: AppDatabase? = null
-        fun getInstance(context: Context): AppDatabase {
-            if(db == null){
-                db = Room.databaseBuilder(
-                    context,
-                    AppDatabase::class.java, "gym"
-                ).build()
+}
+object AppDb{
+    private var db: AppDatabase? = null
+    fun getInstance(context: Context): AppDatabase {
+        if(db == null){
+            db = Room.databaseBuilder(
+                context,
+                AppDatabase::class.java, "gym"
+            ).build()
 
-            }
-            return db!!
         }
+        return db!!
     }
-
 }

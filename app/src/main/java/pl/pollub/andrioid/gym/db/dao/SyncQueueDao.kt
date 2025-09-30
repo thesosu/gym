@@ -29,4 +29,7 @@ interface SyncQueueDao {
 
     @Query("SELECT * FROM sync_queue")
     fun getAllSyncQueues(): Flow<List<SyncQueue>>
+
+    @Query("SELECT * FROM sync_queue WHERE local_id = :id AND table_name = :tn LIMIT 1")
+    fun getSyncQueueByTableName(id: Int, tn: String): SyncQueue?
 }
