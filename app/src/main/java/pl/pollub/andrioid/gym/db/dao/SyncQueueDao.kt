@@ -1,4 +1,32 @@
 package pl.pollub.andrioid.gym.db.dao
 
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
+import pl.pollub.andrioid.gym.db.entity.SyncQueue
+
+@Dao
 interface SyncQueueDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSyncQueue(syncQueue: SyncQueue): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSyncQueues(syncQueues: List<SyncQueue>): List<Long>
+
+    @Update
+    suspend fun updateSyncQueue(syncQueue: SyncQueue)
+
+    @Delete
+    suspend fun deleteSyncQueue(syncQueue: SyncQueue)
+
+    @Query("SELECT * FROM sync_queue WHERE sync_queue_id = :id")
+    suspend fun getSyncQueueById(id: Int): Flow<SyncQueue>
+
+    @Query("SELECT * FROM sync_queue")
+    fun getAllSyncQueues(): Flow<List<SyncQueue>>
 }
