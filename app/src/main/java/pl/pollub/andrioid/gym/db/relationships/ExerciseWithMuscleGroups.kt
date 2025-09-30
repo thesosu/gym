@@ -12,9 +12,9 @@ data class ExerciseWithMuscleGroups (
     val exercise: Exercise,
 
     @Relation(
-        parentColumn = "exercise_id", entityColumn = "muscle_group_id", associateBy = Junction(
-            ExerciseMuscleGroup::class
-        )
+        parentColumn = "exercise_id",
+        entityColumn = "muscle_group_id",
+        associateBy = Junction(ExerciseMuscleGroup::class)
     )
     val muscleGroups: List<MuscleGroup>
 )
