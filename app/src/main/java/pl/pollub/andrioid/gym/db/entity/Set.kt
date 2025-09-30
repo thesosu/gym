@@ -17,7 +17,7 @@ import androidx.room.PrimaryKey
     indices = [Index("workout_exercise_id")]
 )
 data class Set (
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "set_id") private var setId: Int = 0,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "set_id") val setId: Int = 0,
     @ColumnInfo(name = "workout_exercise_id") val workoutExerciseId: Int,
     @ColumnInfo(name = "reps") val reps: Int,
     @ColumnInfo(name = "weight") val weight: Float,

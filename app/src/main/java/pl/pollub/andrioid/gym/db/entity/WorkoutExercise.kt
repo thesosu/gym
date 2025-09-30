@@ -1,12 +1,10 @@
 package pl.pollub.andrioid.gym.db.entity
 
 import androidx.room.ColumnInfo
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import androidx.room.Relation
 
 @Entity(
     tableName = "workout_exercises",
@@ -30,9 +28,4 @@ data class WorkoutExercise (
     @ColumnInfo(name = "position")val position: Int = 1,
     @ColumnInfo(name = "global_id") val globalId:Int? =null
 
-)
-data class WorkoutExerciseWithSets (
-    @Embedded val workoutExercise: WorkoutExercise,
-    @Relation(parentColumn = "workout_exercise_id", entityColumn = "workout_exercise_id")
-    val sets: List<Set> = emptyList()
 )

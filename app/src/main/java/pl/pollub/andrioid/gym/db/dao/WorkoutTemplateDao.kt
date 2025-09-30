@@ -9,8 +9,8 @@ import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import pl.pollub.andrioid.gym.db.entity.WorkoutTemplate
-import pl.pollub.andrioid.gym.db.entity.WorkoutTemplateWithExercises
-import pl.pollub.andrioid.gym.db.entity.WorkoutTemplateWithWorkouts
+import pl.pollub.andrioid.gym.db.relationships.WorkoutTemplateWithExercises
+import pl.pollub.andrioid.gym.db.relationships.WorkoutTemplateWithWorkouts
 
 @Dao
 interface WorkoutTemplateDao {

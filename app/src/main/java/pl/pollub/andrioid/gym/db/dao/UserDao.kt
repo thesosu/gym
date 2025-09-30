@@ -9,12 +9,12 @@ import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import pl.pollub.andrioid.gym.db.entity.User
-import pl.pollub.andrioid.gym.db.entity.UserWithBodyMeasurements
-import pl.pollub.andrioid.gym.db.entity.UserWithExercises
-import pl.pollub.andrioid.gym.db.entity.UserWithExercisesAndMuscleGroups
-import pl.pollub.andrioid.gym.db.entity.UserWithExercisesAndSets
-import pl.pollub.andrioid.gym.db.entity.UserWithWorkoutTemplates
-import pl.pollub.andrioid.gym.db.entity.UserWithWorkouts
+import pl.pollub.andrioid.gym.db.relationships.UserWithBodyMeasurements
+import pl.pollub.andrioid.gym.db.relationships.UserWithExercises
+import pl.pollub.andrioid.gym.db.relationships.UserWithExercisesAndMuscleGroups
+import pl.pollub.andrioid.gym.db.relationships.UserWithExercisesAndSets
+import pl.pollub.andrioid.gym.db.relationships.UserWithWorkoutTemplates
+import pl.pollub.andrioid.gym.db.relationships.UserWithWorkouts
 
 @Dao
 interface UserDao {

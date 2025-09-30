@@ -9,7 +9,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import pl.pollub.andrioid.gym.db.entity.MuscleGroup
-import pl.pollub.andrioid.gym.db.entity.MuscleGroupWithExercises
+import pl.pollub.andrioid.gym.db.relationships.MuscleGroupWithExercises
 
 @Dao
 interface MuscleGroupDao{
@@ -37,7 +37,7 @@ interface MuscleGroupDao{
 
     @Transaction
     @Query("SELECT * FROM muscle_groups")
-    fun getAllMuscleGroupsWithExercises(id: Int): Flow<List<MuscleGroupWithExercises>>
+    fun getAllMuscleGroupsWithExercises(): Flow<List<MuscleGroupWithExercises>>
 
 
 }
