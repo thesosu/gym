@@ -1,0 +1,90 @@
+package pl.pollub.andrioid.gym.repository
+
+import android.content.Context
+import kotlinx.coroutines.flow.Flow
+import pl.pollub.andrioid.gym.db.AppDb
+import pl.pollub.andrioid.gym.db.dao.WorkoutTemplateDao
+import pl.pollub.andrioid.gym.db.entity.SyncQueue
+import pl.pollub.andrioid.gym.db.entity.WorkoutTemplate
+import pl.pollub.andrioid.gym.db.relationships.WorkoutTemplateWithExercises
+import pl.pollub.andrioid.gym.db.relationships.WorkoutTemplateWithWorkouts
+
+class WorkoutTemplateRepository(context: Context): WorkoutTemplateDao {
+    private val workoutTemplateDao = AppDb.getInstance(context).workoutTemplateDao()
+    private val syncQueueDao = AppDb.getInstance(context).syncQueueDao()
+    override suspend fun insertWorkoutTemplate(workoutTemplate: WorkoutTemplate): Long {
+        val newId = workoutTemplateDao.insertWorkoutTemplate(workoutTemplate)
+
+        val q = SyncQueue(
+            tableName = "workoutTemplates",
+            localId = newId.toInt()
+        )
+        syncQueueDao.insertSyncQueue(q)
+        return newId
+    }
+
+    override suspend fun insertAllWorkoutTemplates(workoutTemplates: List<WorkoutTemplate>): List<Long> {
+        val newId = workoutTemplateDao.insertAllWorkoutTemplates(workoutTemplates)
+        for(i in newId){
+            val q = SyncQueue(
+                tableName = "workout_templates",
+                localId = i.toInt()
+            )
+            syncQueueDao.insertSyncQueue(q)
+        }
+        return newId
+    }
+
+    override suspend fun updateWorkoutTemplate(workoutTemplate: WorkoutTemplate) {
+        workoutTemplateDao.updateWorkoutTemplate(workoutTemplate)
+        if(syncQueueDao.getSyncQueueByTableName(workoutTemplate.workoutTemplateId,"workout_templates") == null){
+            val q = SyncQueue(
+                tableName = "workout_templates",
+                localId = workoutTemplate.workoutTemplateId,
+                globalId = workoutTemplate.globalId
+            )
+            syncQueueDao.insertSyncQueue(q)
+        }
+    }
+
+    override suspend fun deleteWorkoutTemplate(workoutTemplate: WorkoutTemplate) {
+        if(workoutTemplate.globalId != null){
+            val q = SyncQueue(
+                tableName = "workout_templates",
+                localId = workoutTemplate.workoutTemplateId,
+                globalId = workoutTemplate.globalId
+            )
+            syncQueueDao.insertSyncQueue(q)
+        }else{
+            val existing = syncQueueDao.getSyncQueueByTableName(workoutTemplate.workoutTemplateId,"workout_templates")
+            if(existing != null){
+                syncQueueDao.deleteSyncQueue(existing)
+            }
+        }
+        workoutTemplateDao.deleteWorkoutTemplate(workoutTemplate)
+    }
+
+    override fun getWorkoutTemplateById(id: Int): Flow<WorkoutTemplate> {
+        return workoutTemplateDao.getWorkoutTemplateById(id)
+    }
+
+    override fun getAllWorkoutTemplates(): Flow<List<WorkoutTemplate>> {
+        return workoutTemplateDao.getAllWorkoutTemplates()
+    }
+
+    override fun getTemplateWithExercises(id: Int): Flow<WorkoutTemplateWithExercises> {
+        return workoutTemplateDao.getTemplateWithExercises(id)
+    }
+
+    override fun getTemplateWithWorkouts(id: Int): Flow<WorkoutTemplateWithWorkouts> {
+        return workoutTemplateDao.getTemplateWithWorkouts(id)
+    }
+
+    override fun getAllTemplatesWithExercises(): Flow<List<WorkoutTemplateWithExercises>> {
+        return workoutTemplateDao.getAllTemplatesWithExercises()
+    }
+
+    override fun getAllTemplatesWithWorkouts(): Flow<List<WorkoutTemplateWithWorkouts>> {
+        return workoutTemplateDao.getAllTemplatesWithWorkouts()
+    }
+}

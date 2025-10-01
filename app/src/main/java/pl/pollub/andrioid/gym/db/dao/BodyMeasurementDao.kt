@@ -19,10 +19,10 @@ interface BodyMeasurementDao {
     fun getBodyMeasurementById(id: Int): Flow<BodyMeasurement>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertBodyMeasurements(bodyMeasurements: List<BodyMeasurement>)
+    suspend fun insertBodyMeasurements(bodyMeasurements: List<BodyMeasurement>): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertBodyMeasurement(bodyMeasurements: BodyMeasurement)
+    suspend fun insertBodyMeasurement(bodyMeasurements: BodyMeasurement): Long
 
     @Update
     suspend fun updateBodyMeasurement(bodyMeasurement: BodyMeasurement)

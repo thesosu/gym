@@ -2,8 +2,10 @@ package pl.pollub.andrioid.gym.repository;
 
 import android.content.Context
 import kotlinx.coroutines.flow.Flow
+import pl.pollub.andrioid.gym.db.AppDb
 
 import pl.pollub.andrioid.gym.db.dao.UserDao
+import pl.pollub.andrioid.gym.db.entity.SyncQueue
 import pl.pollub.andrioid.gym.db.entity.User
 import pl.pollub.andrioid.gym.db.relationships.UserWithBodyMeasurements
 import pl.pollub.andrioid.gym.db.relationships.UserWithExercises
@@ -13,51 +15,89 @@ import pl.pollub.andrioid.gym.db.relationships.UserWithWorkoutTemplates
 import pl.pollub.andrioid.gym.db.relationships.UserWithWorkouts
 
 class UserRepository(context: Context):UserDao{
+    private val userDao = AppDb.getInstance(context).userDao()
+    private val syncQueueDao = AppDb.getInstance(context).syncQueueDao()
     override suspend fun insertUser(user: User): Long {
-        TODO("Not yet implemented")
+        val newId = userDao.insertUser(user)
+
+        val q =SyncQueue(
+            tableName = "users",
+            localId = newId.toInt()
+        )
+        syncQueueDao.insertSyncQueue(q)
+        return newId
     }
 
     override suspend fun insertAllUsers(users: List<User>): List<Long> {
-        TODO("Not yet implemented")
+        val newId = userDao.insertAllUsers(users)
+        for(i in newId){
+            val q = SyncQueue(
+                tableName = "users",
+                localId = i.toInt()
+            )
+            syncQueueDao.insertSyncQueue(q)
+        }
+        return newId
     }
 
     override suspend fun updateUser(user: User) {
-        TODO("Not yet implemented")
+        userDao.updateUser(user)
+        if(syncQueueDao.getSyncQueueByTableName(user.userId,"users") == null){
+            val q = SyncQueue(
+                tableName = "users",
+                localId = user.userId,
+                globalId = user.globalId
+            )
+            syncQueueDao.insertSyncQueue(q)
+        }
     }
 
     override suspend fun deleteUser(user: User) {
-        TODO("Not yet implemented")
+        if(user.globalId != null){
+            val q = SyncQueue(
+                tableName = "users",
+                localId = user.userId,
+                globalId = user.globalId
+            )
+            syncQueueDao.insertSyncQueue(q)
+        }else{
+            val existing = syncQueueDao.getSyncQueueByTableName(user.userId,"users")
+            if(existing != null){
+                syncQueueDao.deleteSyncQueue(existing)
+            }
+        }
+        userDao.deleteUser(user)
     }
 
     override fun getUserById(id: Int): Flow<User> {
-        TODO("Not yet implemented")
+        return userDao.getUserById(id)
     }
 
     override fun getAllUsers(): Flow<List<User>> {
-        TODO("Not yet implemented")
+        return userDao.getAllUsers()
     }
 
-    override fun getUserWithWorkouts(id: Int): Flow<UserWithWorkouts> {
-        TODO("Not yet implemented")
+    override fun getUserWithWorkoutsById(id: Int): Flow<UserWithWorkouts> {
+        return userDao.getUserWithWorkoutsById(id)
     }
 
-    override fun getUserWithExercises(id: Int): Flow<UserWithExercises> {
-        TODO("Not yet implemented")
+    override fun getUserWithExercisesById(id: Int): Flow<UserWithExercises> {
+        return userDao.getUserWithExercisesById(id)
     }
 
-    override fun getUserWithWorkoutTemplates(id: Int): Flow<UserWithWorkoutTemplates> {
-        TODO("Not yet implemented")
+    override fun getUserWithWorkoutTemplatesById(id: Int): Flow<UserWithWorkoutTemplates> {
+        return userDao.getUserWithWorkoutTemplatesById(id)
     }
 
-    override fun getUserWithBodyMeasurements(id: Int): Flow<UserWithBodyMeasurements> {
-        TODO("Not yet implemented")
+    override fun getUserWithBodyMeasurementsById(id: Int): Flow<UserWithBodyMeasurements> {
+        return userDao.getUserWithBodyMeasurementsById(id)
     }
 
-    override fun getUserWithExercisesAndMuscleGroups(id: Int): Flow<UserWithExercisesAndMuscleGroups> {
-        TODO("Not yet implemented")
+    override fun getUserWithExercisesAndMuscleGroupsById(id: Int): Flow<UserWithExercisesAndMuscleGroups> {
+        return userDao.getUserWithExercisesAndMuscleGroupsById(id)
     }
 
-    override fun getUserWithExercisesAndSets(id: Int): Flow<UserWithExercisesAndSets> {
-        TODO("Not yet implemented")
+    override fun getUserWithExercisesAndSetsById(id: Int): Flow<UserWithExercisesAndSets> {
+        return userDao.getUserWithExercisesAndSetsById(id)
     }
 }

@@ -41,7 +41,8 @@ class ExerciseRepository(context: Context):ExerciseDao {
         if(syncQueueDao.getSyncQueueByTableName(exercise.exerciseId,"exercises") == null){
             val q = SyncQueue(
                 tableName = "exercises",
-                localId = exercise.exerciseId
+                localId = exercise.exerciseId,
+                globalId = exercise.globalId
             )
             syncQueueDao.insertSyncQueue(q)
         }
@@ -50,13 +51,13 @@ class ExerciseRepository(context: Context):ExerciseDao {
     override suspend fun deleteExercise(exercise: Exercise) {
         if(exercise.globalId != null){
             val q = SyncQueue(
-                tableName = "exercise",
+                tableName = "exercises",
                 localId = exercise.exerciseId,
                 globalId = exercise.globalId
             )
             syncQueueDao.insertSyncQueue(q)
         }else{
-            val existing = syncQueueDao.getSyncQueueByTableName(exercise.exerciseId,"exercise")
+            val existing = syncQueueDao.getSyncQueueByTableName(exercise.exerciseId,"exercises")
             if(existing != null){
                 syncQueueDao.deleteSyncQueue(existing)
             }

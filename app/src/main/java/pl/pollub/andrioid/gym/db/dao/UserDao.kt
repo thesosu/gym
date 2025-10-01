@@ -39,25 +39,25 @@ interface UserDao {
 
     @Transaction
     @Query("SELECT * FROM users WHERE user_id = :id")
-    fun getUserWithWorkouts(id: Int): Flow<UserWithWorkouts>
+    fun getUserWithWorkoutsById(id: Int): Flow<UserWithWorkouts>
 
     @Transaction
     @Query("SELECT * FROM users WHERE user_id = :id")
-    fun getUserWithExercises(id: Int): Flow<UserWithExercises>
+    fun getUserWithExercisesById(id: Int): Flow<UserWithExercises>
 
     @Transaction
     @Query("SELECT * FROM users WHERE user_id = :id")
-    fun getUserWithWorkoutTemplates(id: Int): Flow<UserWithWorkoutTemplates>
+    fun getUserWithWorkoutTemplatesById(id: Int): Flow<UserWithWorkoutTemplates>
 
     @Transaction
     @Query("SELECT * FROM users WHERE user_id = :id")
-    fun getUserWithBodyMeasurements(id: Int): Flow<UserWithBodyMeasurements>
+    fun getUserWithBodyMeasurementsById(id: Int): Flow<UserWithBodyMeasurements>
 
     @Transaction
     @Query("SELECT * FROM users WHERE user_id = :id")
-    fun getUserWithExercisesAndMuscleGroups(id: Int): Flow<UserWithExercisesAndMuscleGroups>
+    fun getUserWithExercisesAndMuscleGroupsById(id: Int): Flow<UserWithExercisesAndMuscleGroups>
 
     @Transaction
     @Query("SELECT * FROM users WHERE user_id = :id")
-    fun getUserWithExercisesAndSets(id: Int): Flow<UserWithExercisesAndSets>
+    fun getUserWithExercisesAndSetsById(id: Int): Flow<UserWithExercisesAndSets>
 }

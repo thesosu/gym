@@ -34,7 +34,7 @@ interface WorkoutDao {
 
     @Transaction
     @Query("SELECT * FROM workouts WHERE workout_id = :id")
-    fun getWorkoutWithExercises(id: Int): Flow<WorkoutWithWorkoutExercises>
+    fun getWorkoutWithExercisesById(id: Int): Flow<WorkoutWithWorkoutExercises>
 
     @Transaction
     @Query("SELECT * FROM workouts")
