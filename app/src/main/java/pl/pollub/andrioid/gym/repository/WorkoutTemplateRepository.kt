@@ -1,7 +1,9 @@
 package pl.pollub.andrioid.gym.repository
 
 import android.content.Context
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import pl.pollub.andrioid.gym.db.AppDb
 import pl.pollub.andrioid.gym.db.dao.WorkoutTemplateDao
 import pl.pollub.andrioid.gym.db.dao.WorkoutTemplateExerciseDao
@@ -15,7 +17,8 @@ class WorkoutTemplateRepository(context: Context): WorkoutTemplateDao, WorkoutTe
     private val workoutTemplateDao = AppDb.getInstance(context).workoutTemplateDao()
     private val syncQueueDao = AppDb.getInstance(context).syncQueueDao()
     private val workoutTemplateExerciseDao = AppDb.getInstance(context).workoutTemplateExerciseDao()
-    override suspend fun insertWorkoutTemplate(workoutTemplate: WorkoutTemplate): Long {
+
+    override suspend fun insertWorkoutTemplate(workoutTemplate: WorkoutTemplate): Long = withContext(Dispatchers.IO){
         val newId = workoutTemplateDao.insertWorkoutTemplate(workoutTemplate)
 
         val q = SyncQueue(
@@ -23,10 +26,10 @@ class WorkoutTemplateRepository(context: Context): WorkoutTemplateDao, WorkoutTe
             localId = newId.toInt()
         )
         syncQueueDao.insertSyncQueue(q)
-        return newId
+        newId
     }
 
-    override suspend fun insertAllWorkoutTemplates(workoutTemplates: List<WorkoutTemplate>): List<Long> {
+    override suspend fun insertAllWorkoutTemplates(workoutTemplates: List<WorkoutTemplate>): List<Long> = withContext(Dispatchers.IO){
         val newId = workoutTemplateDao.insertAllWorkoutTemplates(workoutTemplates)
         for(i in newId){
             val q = SyncQueue(
@@ -35,10 +38,10 @@ class WorkoutTemplateRepository(context: Context): WorkoutTemplateDao, WorkoutTe
             )
             syncQueueDao.insertSyncQueue(q)
         }
-        return newId
+        newId
     }
 
-    override suspend fun updateWorkoutTemplate(workoutTemplate: WorkoutTemplate) {
+    override suspend fun updateWorkoutTemplate(workoutTemplate: WorkoutTemplate) = withContext(Dispatchers.IO){
         workoutTemplateDao.updateWorkoutTemplate(workoutTemplate)
         if(syncQueueDao.getSyncQueueByTableName(workoutTemplate.workoutTemplateId,"workout_templates") == null){
             val q = SyncQueue(
@@ -50,7 +53,7 @@ class WorkoutTemplateRepository(context: Context): WorkoutTemplateDao, WorkoutTe
         }
     }
 
-    override suspend fun deleteWorkoutTemplate(workoutTemplate: WorkoutTemplate) {
+    override suspend fun deleteWorkoutTemplate(workoutTemplate: WorkoutTemplate) = withContext(Dispatchers.IO){
         if(workoutTemplate.globalId != null){
             val q = SyncQueue(
                 tableName = "workout_templates",
@@ -91,11 +94,12 @@ class WorkoutTemplateRepository(context: Context): WorkoutTemplateDao, WorkoutTe
         return workoutTemplateDao.getAllTemplatesWithWorkouts()
     }
 
-    override suspend fun insertWorkoutTemplateExercise(workoutTemplateExercise: WorkoutTemplateExercise) {
+    override suspend fun insertWorkoutTemplateExercise(workoutTemplateExercise: WorkoutTemplateExercise) = withContext(
+        Dispatchers.IO){
         workoutTemplateExerciseDao.insertWorkoutTemplateExercise(workoutTemplateExercise)
     }
 
-    override suspend fun insertAllWorkoutTemplateExercises(workoutTemplateExercises: List<WorkoutTemplateExercise>) {
+    override suspend fun insertAllWorkoutTemplateExercises(workoutTemplateExercises: List<WorkoutTemplateExercise>) = withContext(Dispatchers.IO){
         workoutTemplateExerciseDao.insertAllWorkoutTemplateExercises(workoutTemplateExercises)
     }
 }

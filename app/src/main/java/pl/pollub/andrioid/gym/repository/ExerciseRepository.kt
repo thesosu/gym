@@ -1,7 +1,9 @@
 package pl.pollub.andrioid.gym.repository
 
 import android.content.Context
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import pl.pollub.andrioid.gym.db.AppDb
 import pl.pollub.andrioid.gym.db.dao.ExerciseDao
 import pl.pollub.andrioid.gym.db.dao.ExerciseMuscleGroupDao
@@ -16,7 +18,7 @@ class ExerciseRepository(context: Context):ExerciseDao, ExerciseMuscleGroupDao {
     private val exerciseDao = AppDb.getInstance(context).exerciseDao()
     private val syncQueueDao = AppDb.getInstance(context).syncQueueDao()
     private val exerciseMuscleGroupDao = AppDb.getInstance(context).exerciseMuscleGroupDao()
-    override suspend fun insertExercise(exercise: Exercise): Long {
+    override suspend fun insertExercise(exercise: Exercise): Long = withContext(Dispatchers.IO){
         val newId = exerciseDao.insertExercise(exercise)
 
         val q =SyncQueue(
@@ -24,10 +26,10 @@ class ExerciseRepository(context: Context):ExerciseDao, ExerciseMuscleGroupDao {
             localId = newId.toInt()
         )
         syncQueueDao.insertSyncQueue(q)
-        return newId
+        newId
     }
 
-    override suspend fun insertExercises(exercises: List<Exercise>): List<Long> {
+    override suspend fun insertExercises(exercises: List<Exercise>): List<Long> = withContext(Dispatchers.IO){
         val newId = exerciseDao.insertExercises(exercises)
         for(i in newId){
             val q = SyncQueue(
@@ -36,10 +38,10 @@ class ExerciseRepository(context: Context):ExerciseDao, ExerciseMuscleGroupDao {
             )
             syncQueueDao.insertSyncQueue(q)
         }
-        return newId
+        newId
     }
 
-    override suspend fun updateExercise(exercise: Exercise) {
+    override suspend fun updateExercise(exercise: Exercise) = withContext(Dispatchers.IO){
         exerciseDao.updateExercise(exercise)
         if(syncQueueDao.getSyncQueueByTableName(exercise.exerciseId,"exercises") == null){
             val q = SyncQueue(
@@ -51,7 +53,7 @@ class ExerciseRepository(context: Context):ExerciseDao, ExerciseMuscleGroupDao {
         }
     }
 
-    override suspend fun deleteExercise(exercise: Exercise) {
+    override suspend fun deleteExercise(exercise: Exercise) = withContext(Dispatchers.IO){
         if(exercise.globalId != null){
             val q = SyncQueue(
                 tableName = "exercises",

@@ -1,7 +1,9 @@
 package pl.pollub.andrioid.gym.repository;
 
 import android.content.Context
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import pl.pollub.andrioid.gym.db.AppDb
 import pl.pollub.andrioid.gym.db.dao.WorkoutDao
 import pl.pollub.andrioid.gym.db.dao.WorkoutExerciseDao
@@ -15,7 +17,8 @@ public class WorkoutRepository(context: Context):WorkoutDao, WorkoutExerciseDao 
     private val workoutDao = AppDb.getInstance(context).workoutDao()
     private val syncQueueDao = AppDb.getInstance(context).syncQueueDao()
     private val workoutExerciseDao = AppDb.getInstance(context).workoutExerciseDao()
-    override suspend fun insertWorkout(workout: Workout): Long {
+
+    override suspend fun insertWorkout(workout: Workout): Long = withContext(Dispatchers.IO){
         val newId = workoutDao.insertWorkout(workout)
 
         val q = SyncQueue(
@@ -23,10 +26,10 @@ public class WorkoutRepository(context: Context):WorkoutDao, WorkoutExerciseDao 
             localId = newId.toInt()
         )
         syncQueueDao.insertSyncQueue(q)
-        return newId
+        newId
     }
 
-    override suspend fun insertAllWorkouts(workouts: List<Workout>): List<Long> {
+    override suspend fun insertAllWorkouts(workouts: List<Workout>): List<Long> = withContext(Dispatchers.IO){
         val newId = workoutDao.insertAllWorkouts(workouts)
         for(i in newId){
             val q = SyncQueue(
@@ -35,10 +38,10 @@ public class WorkoutRepository(context: Context):WorkoutDao, WorkoutExerciseDao 
             )
             syncQueueDao.insertSyncQueue(q)
         }
-        return newId
+        newId
     }
 
-    override suspend fun updateWorkout(workout: Workout) {
+    override suspend fun updateWorkout(workout: Workout) = withContext(Dispatchers.IO){
         workoutDao.updateWorkout(workout)
         if(syncQueueDao.getSyncQueueByTableName(workout.workoutId,"workouts") == null){
             val q = SyncQueue(
@@ -50,7 +53,7 @@ public class WorkoutRepository(context: Context):WorkoutDao, WorkoutExerciseDao 
         }
     }
 
-    override suspend fun deleteWorkout(workout: Workout) {
+    override suspend fun deleteWorkout(workout: Workout) = withContext(Dispatchers.IO){
         if(workout.globalId != null){
             val q = SyncQueue(
                 tableName = "workouts",

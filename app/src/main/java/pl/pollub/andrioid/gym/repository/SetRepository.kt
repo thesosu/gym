@@ -1,7 +1,9 @@
 package pl.pollub.andrioid.gym.repository
 
 import android.content.Context
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import pl.pollub.andrioid.gym.db.AppDb
 import pl.pollub.andrioid.gym.db.dao.SetDao
 import pl.pollub.andrioid.gym.db.entity.Set
@@ -10,7 +12,8 @@ import pl.pollub.andrioid.gym.db.entity.SyncQueue
 class SetRepository(context: Context): SetDao {
     private val setDao = AppDb.getInstance(context).setDao()
     private val syncQueueDao = AppDb.getInstance(context).syncQueueDao()
-    override suspend fun insertSet(set: Set): Long {
+
+    override suspend fun insertSet(set: Set): Long = withContext(Dispatchers.IO){
         val newId = setDao.insertSet(set)
 
         val q = SyncQueue(
@@ -18,10 +21,10 @@ class SetRepository(context: Context): SetDao {
             localId = newId.toInt()
         )
         syncQueueDao.insertSyncQueue(q)
-        return newId
+        newId
     }
 
-    override suspend fun insertSets(sets: List<Set>): List<Long> {
+    override suspend fun insertSets(sets: List<Set>): List<Long> = withContext(Dispatchers.IO){
         val newId = setDao.insertSets(sets)
         for(i in newId){
             val q = SyncQueue(
@@ -30,10 +33,10 @@ class SetRepository(context: Context): SetDao {
             )
             syncQueueDao.insertSyncQueue(q)
         }
-        return newId
+        newId
     }
 
-    override suspend fun updateSet(set: Set) {
+    override suspend fun updateSet(set: Set) = withContext(Dispatchers.IO){
         setDao.updateSet(set)
         if(syncQueueDao.getSyncQueueByTableName(set.setId,"sets") == null){
             val q = SyncQueue(
@@ -45,7 +48,7 @@ class SetRepository(context: Context): SetDao {
         }
     }
 
-    override suspend fun deleteSet(set: Set) {
+    override suspend fun deleteSet(set: Set) = withContext(Dispatchers.IO){
         if(set.globalId != null){
             val q = SyncQueue(
                 tableName = "sets",

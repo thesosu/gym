@@ -1,7 +1,9 @@
 package pl.pollub.andrioid.gym.repository
 
 import android.content.Context
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import pl.pollub.andrioid.gym.db.AppDb
 import pl.pollub.andrioid.gym.db.dao.BodyMeasurementDao
 import pl.pollub.andrioid.gym.db.entity.BodyMeasurement
@@ -19,7 +21,8 @@ class BodyMeasurementRepository(context: Context):BodyMeasurementDao {
         return bodyMeasurementDao.getBodyMeasurementById(id)
     }
 
-    override suspend fun insertBodyMeasurements(bodyMeasurements: List<BodyMeasurement>): List<Long> {
+    override suspend fun insertBodyMeasurements(bodyMeasurements: List<BodyMeasurement>): List<Long> = withContext(
+        Dispatchers.IO){
         val newId = bodyMeasurementDao.insertBodyMeasurements(bodyMeasurements)
         for(i in newId){
             val q = SyncQueue(
@@ -28,19 +31,20 @@ class BodyMeasurementRepository(context: Context):BodyMeasurementDao {
             )
             syncQueueDao.insertSyncQueue(q)
         }
-        return newId    }
+        newId
+    }
 
-    override suspend fun insertBodyMeasurement(bodyMeasurements: BodyMeasurement): Long {
+    override suspend fun insertBodyMeasurement(bodyMeasurements: BodyMeasurement): Long = withContext(Dispatchers.IO){
         val newId = bodyMeasurementDao.insertBodyMeasurement(bodyMeasurements)
         val q =SyncQueue(
             tableName = "body_measurements",
             localId = newId.toInt()
         )
         syncQueueDao.insertSyncQueue(q)
-        return newId
+        newId
     }
 
-    override suspend fun updateBodyMeasurement(bodyMeasurement: BodyMeasurement) {
+    override suspend fun updateBodyMeasurement(bodyMeasurement: BodyMeasurement) = withContext(Dispatchers.IO){
         bodyMeasurementDao.updateBodyMeasurement(bodyMeasurement)
         if(syncQueueDao.getSyncQueueByTableName(bodyMeasurement.bodyMeasurementId,"body_measurements") == null){
             val q = SyncQueue(
@@ -52,7 +56,7 @@ class BodyMeasurementRepository(context: Context):BodyMeasurementDao {
         }
     }
 
-    override suspend fun deleteBodyMeasurement(bodyMeasurement: BodyMeasurement) {
+    override suspend fun deleteBodyMeasurement(bodyMeasurement: BodyMeasurement) = withContext(Dispatchers.IO){
         if(bodyMeasurement.globalId != null){
             val q = SyncQueue(
                 tableName = "body_measurements",

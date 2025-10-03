@@ -1,7 +1,9 @@
 package pl.pollub.andrioid.gym.repository
 
 import android.content.Context
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import pl.pollub.andrioid.gym.db.AppDb
 import pl.pollub.andrioid.gym.db.dao.MuscleGroupDao
 import pl.pollub.andrioid.gym.db.entity.MuscleGroup
@@ -11,17 +13,18 @@ import pl.pollub.andrioid.gym.db.relationships.MuscleGroupWithExercises
 class MuscleGroupRepository(context: Context): MuscleGroupDao {
     private val muscleGroupDao = AppDb.getInstance(context).muscleGroupDao()
     private val syncQueueDao = AppDb.getInstance(context).syncQueueDao()
-    override suspend fun insertMuscleGroup(muscleGroup: MuscleGroup): Long {
+
+    override suspend fun insertMuscleGroup(muscleGroup: MuscleGroup): Long = withContext(Dispatchers.IO){
         val newId = muscleGroupDao.insertMuscleGroup(muscleGroup)
         val q =SyncQueue(
             tableName = "muscle_groups",
             localId = newId.toInt()
         )
         syncQueueDao.insertSyncQueue(q)
-        return newId
+        newId
     }
 
-    override suspend fun insertMuscleGroups(muscleGroups: List<MuscleGroup>): List<Long> {
+    override suspend fun insertMuscleGroups(muscleGroups: List<MuscleGroup>): List<Long> = withContext(Dispatchers.IO){
         val newId = muscleGroupDao.insertMuscleGroups(muscleGroups)
         for(i in newId){
             val q = SyncQueue(
@@ -30,10 +33,10 @@ class MuscleGroupRepository(context: Context): MuscleGroupDao {
             )
             syncQueueDao.insertSyncQueue(q)
         }
-        return newId
+        newId
     }
 
-    override suspend fun updateMuscleGroup(muscleGroup: MuscleGroup) {
+    override suspend fun updateMuscleGroup(muscleGroup: MuscleGroup) = withContext(Dispatchers.IO){
         muscleGroupDao.updateMuscleGroup(muscleGroup)
         if(syncQueueDao.getSyncQueueByTableName(muscleGroup.muscleGroupId,"muscle_groups") == null){
             val q = SyncQueue(
@@ -45,7 +48,7 @@ class MuscleGroupRepository(context: Context): MuscleGroupDao {
         }
     }
 
-    override suspend fun deleteMuscleGroup(muscleGroup: MuscleGroup) {
+    override suspend fun deleteMuscleGroup(muscleGroup: MuscleGroup) = withContext(Dispatchers.IO){
         if(muscleGroup.globalId != null){
             val q = SyncQueue(
                 tableName = "muscle_groups",

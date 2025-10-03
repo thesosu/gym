@@ -1,7 +1,9 @@
 package pl.pollub.andrioid.gym.repository;
 
 import android.content.Context
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import pl.pollub.andrioid.gym.db.AppDb
 
 import pl.pollub.andrioid.gym.db.dao.UserDao
@@ -17,7 +19,7 @@ import pl.pollub.andrioid.gym.db.relationships.UserWithWorkouts
 class UserRepository(context: Context):UserDao{
     private val userDao = AppDb.getInstance(context).userDao()
     private val syncQueueDao = AppDb.getInstance(context).syncQueueDao()
-    override suspend fun insertUser(user: User): Long {
+    override suspend fun insertUser(user: User): Long = withContext(Dispatchers.IO){
         val newId = userDao.insertUser(user)
 
         val q =SyncQueue(
@@ -25,10 +27,10 @@ class UserRepository(context: Context):UserDao{
             localId = newId.toInt()
         )
         syncQueueDao.insertSyncQueue(q)
-        return newId
+        newId
     }
 
-    override suspend fun insertAllUsers(users: List<User>): List<Long> {
+    override suspend fun insertAllUsers(users: List<User>): List<Long> = withContext(Dispatchers.IO){
         val newId = userDao.insertAllUsers(users)
         for(i in newId){
             val q = SyncQueue(
@@ -37,10 +39,10 @@ class UserRepository(context: Context):UserDao{
             )
             syncQueueDao.insertSyncQueue(q)
         }
-        return newId
+        newId
     }
 
-    override suspend fun updateUser(user: User) {
+    override suspend fun updateUser(user: User) = withContext(Dispatchers.IO){
         userDao.updateUser(user)
         if(syncQueueDao.getSyncQueueByTableName(user.userId,"users") == null){
             val q = SyncQueue(
@@ -52,7 +54,7 @@ class UserRepository(context: Context):UserDao{
         }
     }
 
-    override suspend fun deleteUser(user: User) {
+    override suspend fun deleteUser(user: User) = withContext(Dispatchers.IO){
         if(user.globalId != null){
             val q = SyncQueue(
                 tableName = "users",
