@@ -4,15 +4,18 @@ import android.content.Context
 import kotlinx.coroutines.flow.Flow
 import pl.pollub.andrioid.gym.db.AppDb
 import pl.pollub.andrioid.gym.db.dao.ExerciseDao
+import pl.pollub.andrioid.gym.db.dao.ExerciseMuscleGroupDao
 import pl.pollub.andrioid.gym.db.entity.Exercise
+import pl.pollub.andrioid.gym.db.entity.ExerciseMuscleGroup
 import pl.pollub.andrioid.gym.db.entity.SyncQueue
 import pl.pollub.andrioid.gym.db.relationships.ExerciseWithMuscleGroups
 import pl.pollub.andrioid.gym.db.relationships.ExerciseWithWorkoutExercise
 import pl.pollub.andrioid.gym.db.relationships.ExerciseWithWorkoutTemplates
 
-class ExerciseRepository(context: Context):ExerciseDao {
+class ExerciseRepository(context: Context):ExerciseDao, ExerciseMuscleGroupDao {
     private val exerciseDao = AppDb.getInstance(context).exerciseDao()
     private val syncQueueDao = AppDb.getInstance(context).syncQueueDao()
+    private val exerciseMuscleGroupDao = AppDb.getInstance(context).exerciseMuscleGroupDao()
     override suspend fun insertExercise(exercise: Exercise): Long {
         val newId = exerciseDao.insertExercise(exercise)
 
@@ -95,5 +98,13 @@ class ExerciseRepository(context: Context):ExerciseDao {
 
     override fun getAllExercisesWithWorkoutTemplates(): Flow<List<ExerciseWithWorkoutTemplates>> {
         return exerciseDao.getAllExercisesWithWorkoutTemplates()
+    }
+
+    override suspend fun insertExerciseMuscleGroup(exerciseMuscleGroup: ExerciseMuscleGroup) {
+        exerciseMuscleGroupDao.insertExerciseMuscleGroup(exerciseMuscleGroup)
+    }
+
+    override suspend fun insertAllExercisesMuscleGroups(exerciseMuscleGroups: List<ExerciseMuscleGroup>) {
+        exerciseMuscleGroupDao.insertAllExercisesMuscleGroups(exerciseMuscleGroups)
     }
 }

@@ -4,13 +4,17 @@ import android.content.Context
 import kotlinx.coroutines.flow.Flow
 import pl.pollub.andrioid.gym.db.AppDb
 import pl.pollub.andrioid.gym.db.dao.WorkoutDao
+import pl.pollub.andrioid.gym.db.dao.WorkoutExerciseDao
 import pl.pollub.andrioid.gym.db.entity.SyncQueue
 import pl.pollub.andrioid.gym.db.entity.Workout
+import pl.pollub.andrioid.gym.db.entity.WorkoutExercise
+import pl.pollub.andrioid.gym.db.relationships.WorkoutExerciseWithSets
 import pl.pollub.andrioid.gym.db.relationships.WorkoutWithWorkoutExercises
 
-public class WorkoutRepository(context: Context):WorkoutDao {
+public class WorkoutRepository(context: Context):WorkoutDao, WorkoutExerciseDao {
     private val workoutDao = AppDb.getInstance(context).workoutDao()
     private val syncQueueDao = AppDb.getInstance(context).syncQueueDao()
+    private val workoutExerciseDao = AppDb.getInstance(context).workoutExerciseDao()
     override suspend fun insertWorkout(workout: Workout): Long {
         val newId = workoutDao.insertWorkout(workout)
 
@@ -77,5 +81,37 @@ public class WorkoutRepository(context: Context):WorkoutDao {
 
     override fun getAllWorkoutsWithExercises(): Flow<List<WorkoutWithWorkoutExercises>> {
         return workoutDao.getAllWorkoutsWithExercises()
+    }
+
+    override suspend fun insertWorkoutExercise(workoutExercise: WorkoutExercise): Long {
+        return workoutExerciseDao.insertWorkoutExercise(workoutExercise)
+    }
+
+    override suspend fun insertAllWorkoutExercises(workoutExercises: List<WorkoutExercise>): List<Long> {
+        return workoutExerciseDao.insertAllWorkoutExercises(workoutExercises)
+    }
+
+    override suspend fun updateWorkoutExercise(workoutExercise: WorkoutExercise) {
+        workoutExerciseDao.insertWorkoutExercise(workoutExercise)
+    }
+
+    override suspend fun deleteWorkoutExercise(workoutExercise: WorkoutExercise) {
+        workoutExerciseDao.deleteWorkoutExercise(workoutExercise)
+    }
+
+    override fun getWorkoutExerciseById(id: Int): Flow<WorkoutExercise> {
+        return workoutExerciseDao.getWorkoutExerciseById(id)
+    }
+
+    override fun getAllWorkoutExercises(): Flow<List<WorkoutExercise>> {
+        return workoutExerciseDao.getAllWorkoutExercises()
+    }
+
+    override fun getWorkoutExerciseWithSets(id: Int): Flow<WorkoutExerciseWithSets> {
+        return workoutExerciseDao.getWorkoutExerciseWithSets(id)
+    }
+
+    override fun getAllWorkoutExercisesWithSets(): Flow<List<WorkoutExerciseWithSets>> {
+        return workoutExerciseDao.getAllWorkoutExercisesWithSets()
     }
 }

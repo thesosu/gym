@@ -4,14 +4,17 @@ import android.content.Context
 import kotlinx.coroutines.flow.Flow
 import pl.pollub.andrioid.gym.db.AppDb
 import pl.pollub.andrioid.gym.db.dao.WorkoutTemplateDao
+import pl.pollub.andrioid.gym.db.dao.WorkoutTemplateExerciseDao
 import pl.pollub.andrioid.gym.db.entity.SyncQueue
 import pl.pollub.andrioid.gym.db.entity.WorkoutTemplate
+import pl.pollub.andrioid.gym.db.entity.WorkoutTemplateExercise
 import pl.pollub.andrioid.gym.db.relationships.WorkoutTemplateWithExercises
 import pl.pollub.andrioid.gym.db.relationships.WorkoutTemplateWithWorkouts
 
-class WorkoutTemplateRepository(context: Context): WorkoutTemplateDao {
+class WorkoutTemplateRepository(context: Context): WorkoutTemplateDao, WorkoutTemplateExerciseDao {
     private val workoutTemplateDao = AppDb.getInstance(context).workoutTemplateDao()
     private val syncQueueDao = AppDb.getInstance(context).syncQueueDao()
+    private val workoutTemplateExerciseDao = AppDb.getInstance(context).workoutTemplateExerciseDao()
     override suspend fun insertWorkoutTemplate(workoutTemplate: WorkoutTemplate): Long {
         val newId = workoutTemplateDao.insertWorkoutTemplate(workoutTemplate)
 
@@ -86,5 +89,13 @@ class WorkoutTemplateRepository(context: Context): WorkoutTemplateDao {
 
     override fun getAllTemplatesWithWorkouts(): Flow<List<WorkoutTemplateWithWorkouts>> {
         return workoutTemplateDao.getAllTemplatesWithWorkouts()
+    }
+
+    override suspend fun insertWorkoutTemplateExercise(workoutTemplateExercise: WorkoutTemplateExercise) {
+        workoutTemplateExerciseDao.insertWorkoutTemplateExercise(workoutTemplateExercise)
+    }
+
+    override suspend fun insertAllWorkoutTemplateExercises(workoutTemplateExercises: List<WorkoutTemplateExercise>) {
+        workoutTemplateExerciseDao.insertAllWorkoutTemplateExercises(workoutTemplateExercises)
     }
 }

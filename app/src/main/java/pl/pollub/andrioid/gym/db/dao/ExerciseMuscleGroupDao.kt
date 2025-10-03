@@ -11,5 +11,5 @@ interface ExerciseMuscleGroupDao {
     suspend fun insertExerciseMuscleGroup(exerciseMuscleGroup: ExerciseMuscleGroup)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertExercisesMuscleGroups(exerciseMuscleGroups: List<ExerciseMuscleGroup>)
+    suspend fun insertAllExercisesMuscleGroups(exerciseMuscleGroups: List<ExerciseMuscleGroup>)
 }
