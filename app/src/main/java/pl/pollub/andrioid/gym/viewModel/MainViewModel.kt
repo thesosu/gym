@@ -5,6 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pl.pollub.andrioid.gym.db.entity.Exercise
 import pl.pollub.andrioid.gym.db.entity.ExerciseMuscleGroup
@@ -29,6 +31,18 @@ class MainViewModel(app: Application): AndroidViewModel(app) {
     private val userRepository = UserRepository(app.applicationContext)
     private val workoutRepository = WorkoutRepository(app.applicationContext)
     private val workoutTemplateRepository = WorkoutTemplateRepository(app.applicationContext)
+
+
+    private val _exercise = MutableStateFlow<Exercise?>(null)
+    val exercise = _exercise.asStateFlow()
+
+    suspend fun add(){
+        viewModelScope.launch {
+                syncQueueRepository.addToServer()
+
+        }
+    }
+
 
     fun getAllExercises(): Flow<List<Exercise>> {
         return exerciseRepository.getAllExercises()

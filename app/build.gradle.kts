@@ -37,9 +37,8 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-        //Add Bundle
+        //Add Jetpack Compose
     buildFeatures{
-        viewBinding = true
         compose = true
     }
 }
@@ -64,25 +63,28 @@ dependencies {
     // Room
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
     ksp(libs.room.compiler)
 
     // Lifecycle
     implementation(libs.lifecycle.runtime.ktx)
-    implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
 
     // Coroutines
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
 
-    // Retrofit + OkHttp
+    // Retrofit
     implementation(libs.retrofit)
-    implementation(libs.retrofit.gson)
-    implementation(libs.okhttp)
-    implementation(libs.okhttp.logging)
+
+    //mosh
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.converter.moshi)
+
+    //OkHttp
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
+
 
 }

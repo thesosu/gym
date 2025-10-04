@@ -89,7 +89,17 @@ fun Greeting(mainViewModel:MainViewModel) {
 
         },modifier = Modifier
             .width(120.dp)
-            .height(40.dp)) { Text("usuń") }
+            .height(40.dp)) { Text("usuń")
+        }
+        Button(onClick = {
+            scope.launch {
+                mainViewModel.add()
+            }
+
+        },modifier = Modifier
+            .width(120.dp)
+            .height(40.dp)) { Text("Wyslij")
+        }
     }
 }
 

@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import kotlinx.coroutines.flow.Flow
 import pl.pollub.andrioid.gym.db.entity.SyncQueue
 
 @Dao
@@ -25,10 +24,10 @@ interface SyncQueueDao {
     suspend fun deleteSyncQueue(syncQueue: SyncQueue)
 
     @Query("SELECT * FROM sync_queue WHERE sync_queue_id = :id")
-    fun getSyncQueueById(id: Int): Flow<SyncQueue>
+    fun getSyncQueueById(id: Int): SyncQueue
 
     @Query("SELECT * FROM sync_queue")
-    fun getAllSyncQueues(): Flow<List<SyncQueue>>
+    fun getAllSyncQueues(): List<SyncQueue>
 
     @Query("SELECT * FROM sync_queue WHERE local_id = :id AND table_name = :tn LIMIT 1")
     fun getSyncQueueByTableName(id: Int, tn: String): SyncQueue?

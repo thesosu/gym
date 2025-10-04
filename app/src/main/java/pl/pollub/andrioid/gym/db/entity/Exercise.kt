@@ -21,7 +21,7 @@ data class Exercise (
     @ColumnInfo(name = "user_id") val userId: Int,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "description") val description: String,
-    @ColumnInfo(name = "global_id") val globalId:Int? =null
+    @ColumnInfo(name = "global_id") var globalId:Int? =null
 
 )
 

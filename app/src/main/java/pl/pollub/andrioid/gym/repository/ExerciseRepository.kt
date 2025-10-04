@@ -18,6 +18,8 @@ class ExerciseRepository(context: Context):ExerciseDao, ExerciseMuscleGroupDao {
     private val exerciseDao = AppDb.getInstance(context).exerciseDao()
     private val syncQueueDao = AppDb.getInstance(context).syncQueueDao()
     private val exerciseMuscleGroupDao = AppDb.getInstance(context).exerciseMuscleGroupDao()
+
+
     override suspend fun insertExercise(exercise: Exercise): Long = withContext(Dispatchers.IO){
         val newId = exerciseDao.insertExercise(exercise)
 
