@@ -8,5 +8,5 @@ import androidx.room.PrimaryKey
 data class MuscleGroup(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "muscle_group_id") val muscleGroupId: Int = 0,
     @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "global_id") val globalId:Int? = null
+    @ColumnInfo(name = "global_id") var globalId:Int? = null
 )

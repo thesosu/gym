@@ -80,6 +80,10 @@ class ExerciseRepository(context: Context):ExerciseDao, ExerciseMuscleGroupDao {
         return exerciseDao.getAllExercises()
     }
 
+    override fun getMuscleGroupIdsForExercise(id: Int): List<Int> {
+        return exerciseDao.getMuscleGroupIdsForExercise(id)
+    }
+
     override fun getExerciseWithMuscleGroups(id: Int): Flow<ExerciseWithMuscleGroups> {
         return exerciseDao.getExerciseWithMuscleGroups(id)
     }

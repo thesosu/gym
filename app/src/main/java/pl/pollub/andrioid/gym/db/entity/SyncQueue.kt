@@ -8,6 +8,6 @@ import androidx.room.PrimaryKey
 data class SyncQueue (
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "sync_queue_id") val syncQueueId: Int = 0,
     @ColumnInfo(name = "table_name") val tableName: String,
-    @ColumnInfo(name = "local_id") val localId:Int,
+    @ColumnInfo(name = "local_id") val localId:Int? =null,
     @ColumnInfo(name = "global_id") val globalId: Int? = null
 )

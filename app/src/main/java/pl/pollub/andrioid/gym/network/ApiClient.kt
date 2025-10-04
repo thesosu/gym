@@ -17,7 +17,7 @@ class AuthInterceptor(private val token: String) : Interceptor {
 
 object ApiClient {
 
-    private const val TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ1c2VyIiwiaWF0IjoxNzU5NTg1NjM5LCJleHAiOjE3NjIxNzc2Mzl9.SnpD1G7bxK-RVxYrLF-RYFsUkAGMPMtAsk4WAjXEzcY"
+    private const val TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ1c2VyIiwiaWF0IjoxNzU5NTk5MDcxLCJleHAiOjE3NjIxOTEwNzF9.qYX_dfDkEV-ZzrAbnnuBeFbWz42WOSND1s5kLUh3h28"
 
     private val client = OkHttpClient.Builder()
         .addInterceptor(AuthInterceptor(TOKEN))

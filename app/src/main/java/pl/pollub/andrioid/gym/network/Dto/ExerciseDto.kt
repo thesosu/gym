@@ -4,8 +4,9 @@ import com.squareup.moshi.JsonClass
 
 
 @JsonClass(generateAdapter = true)
-data class ExerciseRequest(
-    val userId: Int,
+data class ExerciseDto(
+    val id: Int? = null,
     val name: String,
-    val description: String
+    val description: String?,
+    val muscleGroups: List<Int>
 )

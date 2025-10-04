@@ -34,6 +34,9 @@ interface ExerciseDao {
     @Query("SELECT * FROM exercises")
     fun getAllExercises(): Flow<List<Exercise>>
 
+    @Query("SELECT muscle_group_id FROM exercises_muscle_groups WHERE exercise_id = :id")
+    fun getMuscleGroupIdsForExercise(id: Int): List<Int>
+
     @Transaction
     @Query("SELECT * FROM exercises WHERE exercise_id = :id")
     fun getExerciseWithMuscleGroups(id: Int): Flow<ExerciseWithMuscleGroups>

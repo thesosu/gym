@@ -18,56 +18,21 @@ import pl.pollub.andrioid.gym.db.relationships.UserWithWorkouts
 
 class UserRepository(context: Context):UserDao{
     private val userDao = AppDb.getInstance(context).userDao()
-    private val syncQueueDao = AppDb.getInstance(context).syncQueueDao()
     override suspend fun insertUser(user: User): Long = withContext(Dispatchers.IO){
         val newId = userDao.insertUser(user)
-
-        val q =SyncQueue(
-            tableName = "users",
-            localId = newId.toInt()
-        )
-        syncQueueDao.insertSyncQueue(q)
         newId
     }
 
     override suspend fun insertAllUsers(users: List<User>): List<Long> = withContext(Dispatchers.IO){
         val newId = userDao.insertAllUsers(users)
-        for(i in newId){
-            val q = SyncQueue(
-                tableName = "users",
-                localId = i.toInt()
-            )
-            syncQueueDao.insertSyncQueue(q)
-        }
         newId
     }
 
     override suspend fun updateUser(user: User) = withContext(Dispatchers.IO){
         userDao.updateUser(user)
-        if(syncQueueDao.getSyncQueueByTableName(user.userId,"users") == null){
-            val q = SyncQueue(
-                tableName = "users",
-                localId = user.userId,
-                globalId = user.globalId
-            )
-            syncQueueDao.insertSyncQueue(q)
-        }
     }
 
     override suspend fun deleteUser(user: User) = withContext(Dispatchers.IO){
-        if(user.globalId != null){
-            val q = SyncQueue(
-                tableName = "users",
-                localId = user.userId,
-                globalId = user.globalId
-            )
-            syncQueueDao.insertSyncQueue(q)
-        }else{
-            val existing = syncQueueDao.getSyncQueueByTableName(user.userId,"users")
-            if(existing != null){
-                syncQueueDao.deleteSyncQueue(existing)
-            }
-        }
         userDao.deleteUser(user)
     }
 
