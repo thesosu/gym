@@ -3,9 +3,12 @@ package pl.pollub.andrioid.gym.network.Dto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
+
 @JsonClass(generateAdapter = true)
-data class ExerciseResponse(
-    @Json(name = "id")
-    val id: Int
+data class LoginResponse(
+    @Json(name = "message")
+    val message: String,
+    @Json(name = "token")
+    val token: String
 )
 

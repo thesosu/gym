@@ -19,7 +19,7 @@ class SyncQueueRepository(context: Context): SyncQueueDao {
     private val muscleGroupDao = AppDb.getInstance(context).muscleGroupDao()
     private val exerciseMuscleGroupDao = AppDb.getInstance(context).exerciseMuscleGroupDao()
 
-    private val api = ApiClient.api
+    private val api = ApiClient.create(context)
 
     suspend fun addToServer()= withContext(Dispatchers.IO){
         val syncQueue = syncQueueDao.getAllSyncQueues()
@@ -59,7 +59,7 @@ class SyncQueueRepository(context: Context): SyncQueueDao {
                     exercise.globalId = response.id
                     exerciseDao.updateExercise(exercise)
                     syncQueueDao.deleteSyncQueue(q)
-                    println("blad: "+request)
+                    println("ok: "+request)
 
                 }catch (e:Exception){
                     println("blad: "+e.message)
@@ -82,39 +82,6 @@ class SyncQueueRepository(context: Context): SyncQueueDao {
 
     }
     private suspend fun syncMuscleGroup(q: SyncQueue){
-        when{
-            //Add
-            q.globalId == null && q.localId != null ->{
-
-                val muscleGroup = muscleGroupDao.getMuscleGroupById(q.localId).first()
-                val request = MuscleGroupDto(
-                    id = null,
-                    name = muscleGroup.name
-                )
-
-                try {
-                    val response = api.insertMuscleGroup(request)
-                    muscleGroup.globalId = response.id
-                    muscleGroupDao.updateMuscleGroup(muscleGroup)
-                    syncQueueDao.deleteSyncQueue(q)
-                    println("ok: "+request)
-
-                }catch (e:Exception){
-                    println("blad: "+e.message)
-                }
-
-
-            }
-            //Update
-            q.globalId != null && q.localId != null ->{
-
-            }
-            //Delete
-            q.globalId != null && q.localId == null ->{
-
-            }
-        }
-
 
     }
     private suspend fun syncBodyMeasurement(q: SyncQueue){

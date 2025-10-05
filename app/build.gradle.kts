@@ -86,5 +86,9 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
 
+    //EncryptedSharedPreferences
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+
+
 
 }

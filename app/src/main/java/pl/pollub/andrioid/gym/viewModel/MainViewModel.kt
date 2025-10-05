@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pl.pollub.andrioid.gym.db.entity.Exercise
@@ -36,13 +37,31 @@ class MainViewModel(app: Application): AndroidViewModel(app) {
     private val _exercise = MutableStateFlow<Exercise?>(null)
     val exercise = _exercise.asStateFlow()
 
-    suspend fun add(){
+    fun add(){
         viewModelScope.launch {
                 syncQueueRepository.addToServer()
 
         }
     }
+    private val _loginState =  MutableStateFlow(!userRepository.getToken().isNullOrEmpty())
+    val loginState: StateFlow<Boolean> get() = _loginState
 
+    fun login(username: String, password: String) {
+        viewModelScope.launch {
+            val success = userRepository.login(username, password)
+            _loginState.value = success
+        }
+    }
+
+    fun getToken(): String? {
+        return userRepository.getToken()
+    }
+
+
+    fun logout() {
+        userRepository.logout()
+        _loginState.value = false
+    }
 
     fun getAllExercises(): Flow<List<Exercise>> {
         return exerciseRepository.getAllExercises()

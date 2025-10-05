@@ -1,33 +1,40 @@
 package pl.pollub.andrioid.gym.network
 
+import android.content.Context
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 
-class AuthInterceptor(private val token: String) : Interceptor {
+class AuthInterceptor(private val tokenManager: TokenManager) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
+        val token = tokenManager.getToken()
+
         val request = chain.request().newBuilder()
-            .addHeader("Authorization", "Bearer $token")
-            .build()
-        return chain.proceed(request)
+        if (!token.isNullOrEmpty()) {
+            request.addHeader("Authorization", "Bearer $token")
+        }
+        return chain.proceed(request.build())
     }
 }
 
 object ApiClient {
 
-    private const val TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ1c2VyIiwiaWF0IjoxNzU5NTk5MDcxLCJleHAiOjE3NjIxOTEwNzF9.qYX_dfDkEV-ZzrAbnnuBeFbWz42WOSND1s5kLUh3h28"
+    private const val BASE_URL = "http://10.0.2.2:8000/api/"
+    fun create(context: Context): ApiService {
+        val tokenManager = TokenManager(context)
 
-    private val client = OkHttpClient.Builder()
-        .addInterceptor(AuthInterceptor(TOKEN))
-        .build()
+        val client = OkHttpClient.Builder()
+            .addInterceptor(AuthInterceptor(tokenManager))
+            .build()
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl("http://10.0.2.2:8000/api/")
-        .client(client) // <-- podłączamy klienta z interceptor
-        .addConverterFactory(MoshiConverterFactory.create())
-        .build()
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(client)
+            .addConverterFactory(MoshiConverterFactory.create())
+            .build()
 
-    val api = retrofit.create(ApiService::class.java)
+        return retrofit.create(ApiService::class.java)
+    }
 }

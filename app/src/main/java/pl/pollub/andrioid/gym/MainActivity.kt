@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +20,8 @@ import pl.pollub.andrioid.gym.ui.theme.GymTheme
 import pl.pollub.andrioid.gym.viewModel.MainViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -48,6 +51,11 @@ fun Greeting(mainViewModel:MainViewModel) {
     val exercises by mainViewModel.getAllExercises().collectAsState(initial = emptyList())
     val muscleGroups by mainViewModel.getAllMuscleGroups().collectAsState(initial = emptyList())
     val users by mainViewModel.getUser().collectAsState(initial = emptyList())
+    val loginState by mainViewModel.loginState.collectAsState()
+
+    val usernameState = remember {mutableStateOf("") }
+    val passwordState = remember {mutableStateOf("")}
+
     val time = System.currentTimeMillis()
     val scope = rememberCoroutineScope()
     Column(modifier = Modifier.padding(16.dp)) {
@@ -58,6 +66,44 @@ fun Greeting(mainViewModel:MainViewModel) {
 
         Text(muscleGroups.toString())
         Text("===============================")
+        if (!loginState) {
+            Text("Logowanie")
+            OutlinedTextField(
+                value = usernameState.value,
+                onValueChange = { usernameState.value = it },
+                label = { Text("Username") },
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
+            OutlinedTextField(
+                value = passwordState.value,
+                onValueChange = { passwordState.value = it },
+                label = { Text("Password") },
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
+            Button(
+                onClick = {
+                    scope.launch {
+                        mainViewModel.login(usernameState.value, passwordState.value)
+                    }
+                },
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(40.dp)
+            ) {
+                Text("Zaloguj")
+            }
+        } else {
+            Text("Zalogowany")
+            Button(
+                onClick = { mainViewModel.logout() },
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(40.dp)
+            ) {
+                Text("Wyloguj")
+            }
+        }
+
 
         Button(
             onClick = {

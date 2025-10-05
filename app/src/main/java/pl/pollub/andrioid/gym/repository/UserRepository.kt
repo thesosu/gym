@@ -15,9 +15,58 @@ import pl.pollub.andrioid.gym.db.relationships.UserWithExercisesAndMuscleGroups
 import pl.pollub.andrioid.gym.db.relationships.UserWithExercisesAndSets
 import pl.pollub.andrioid.gym.db.relationships.UserWithWorkoutTemplates
 import pl.pollub.andrioid.gym.db.relationships.UserWithWorkouts
+import pl.pollub.andrioid.gym.network.ApiClient
+import pl.pollub.andrioid.gym.network.Dto.LoginRequest
+import pl.pollub.andrioid.gym.network.Dto.RegisterRequest
+import pl.pollub.andrioid.gym.network.TokenManager
 
 class UserRepository(context: Context):UserDao{
     private val userDao = AppDb.getInstance(context).userDao()
+    private val api = ApiClient.create(context)
+
+
+    private val tokenManager = TokenManager(context)
+
+    suspend fun login(username: String, password: String): Boolean {
+        return try {
+            val response = api.login(LoginRequest(username, password))
+            tokenManager.saveToken(response.token)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    fun getToken(): String? = tokenManager.getToken()
+
+    fun logout() = tokenManager.clearToken()
+
+    suspend fun register(
+        username: String,
+        email: String,
+        password: String,
+        confirmPassword: String
+    ): Boolean {
+        return try {
+            val response = api.register(
+                RegisterRequest(
+                    username = username,
+                    email = email,
+                    password = password,
+                    confirmPassword = confirmPassword
+                )
+            )
+
+            response.success
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+
+
     override suspend fun insertUser(user: User): Long = withContext(Dispatchers.IO){
         val newId = userDao.insertUser(user)
         newId
