@@ -1,4 +1,4 @@
-package pl.pollub.andrioid.gym.network.dto
+package pl.pollub.andrioid.gym.network.dto.response
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

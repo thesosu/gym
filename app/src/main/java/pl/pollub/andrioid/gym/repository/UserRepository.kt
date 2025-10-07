@@ -15,9 +15,8 @@ import pl.pollub.andrioid.gym.db.relationships.UserWithExercisesAndSets
 import pl.pollub.andrioid.gym.db.relationships.UserWithWorkoutTemplates
 import pl.pollub.andrioid.gym.db.relationships.UserWithWorkouts
 import pl.pollub.andrioid.gym.network.ApiClient
-import pl.pollub.andrioid.gym.network.dto.LoginRequest
-import pl.pollub.andrioid.gym.network.dto.RegisterRequest
 import pl.pollub.andrioid.gym.network.TokenManager
+import pl.pollub.andrioid.gym.network.dto.reguest.LoginRequest
 
 class UserRepository(context: Context):UserDao{
     private val userDao = AppDb.getInstance(context).userDao()
@@ -28,7 +27,7 @@ class UserRepository(context: Context):UserDao{
 
     suspend fun login(username: String, password: String): Boolean {
         return try {
-            val response = api.login(LoginRequest(username, password))
+            val response = api.login(LoginRequest(username = username, password = password))
             tokenManager.saveToken(response.token)
             true
         } catch (e: Exception) {
