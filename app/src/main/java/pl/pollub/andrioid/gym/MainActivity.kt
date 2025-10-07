@@ -32,7 +32,7 @@ import pl.pollub.andrioid.gym.db.entity.User
 
 
 class MainActivity : ComponentActivity() {
-    val mainViewModel by viewModels<MainViewModel> ()
+    private val mainViewModel by viewModels<MainViewModel> ()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

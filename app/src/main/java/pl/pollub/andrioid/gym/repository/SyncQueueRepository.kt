@@ -9,8 +9,7 @@ import pl.pollub.andrioid.gym.db.AppDb
 import pl.pollub.andrioid.gym.db.dao.SyncQueueDao
 import pl.pollub.andrioid.gym.db.entity.SyncQueue
 import pl.pollub.andrioid.gym.network.ApiClient
-import pl.pollub.andrioid.gym.network.Dto.ExerciseDto
-import pl.pollub.andrioid.gym.network.Dto.MuscleGroupDto
+import pl.pollub.andrioid.gym.network.dto.ExerciseDto
 
 class SyncQueueRepository(context: Context): SyncQueueDao {
     private val syncQueueDao = AppDb.getInstance(context).syncQueueDao()

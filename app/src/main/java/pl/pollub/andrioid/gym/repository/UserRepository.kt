@@ -7,7 +7,6 @@ import kotlinx.coroutines.withContext
 import pl.pollub.andrioid.gym.db.AppDb
 
 import pl.pollub.andrioid.gym.db.dao.UserDao
-import pl.pollub.andrioid.gym.db.entity.SyncQueue
 import pl.pollub.andrioid.gym.db.entity.User
 import pl.pollub.andrioid.gym.db.relationships.UserWithBodyMeasurements
 import pl.pollub.andrioid.gym.db.relationships.UserWithExercises
@@ -16,8 +15,8 @@ import pl.pollub.andrioid.gym.db.relationships.UserWithExercisesAndSets
 import pl.pollub.andrioid.gym.db.relationships.UserWithWorkoutTemplates
 import pl.pollub.andrioid.gym.db.relationships.UserWithWorkouts
 import pl.pollub.andrioid.gym.network.ApiClient
-import pl.pollub.andrioid.gym.network.Dto.LoginRequest
-import pl.pollub.andrioid.gym.network.Dto.RegisterRequest
+import pl.pollub.andrioid.gym.network.dto.LoginRequest
+import pl.pollub.andrioid.gym.network.dto.RegisterRequest
 import pl.pollub.andrioid.gym.network.TokenManager
 
 class UserRepository(context: Context):UserDao{
@@ -42,28 +41,6 @@ class UserRepository(context: Context):UserDao{
 
     fun logout() = tokenManager.clearToken()
 
-    suspend fun register(
-        username: String,
-        email: String,
-        password: String,
-        confirmPassword: String
-    ): Boolean {
-        return try {
-            val response = api.register(
-                RegisterRequest(
-                    username = username,
-                    email = email,
-                    password = password,
-                    confirmPassword = confirmPassword
-                )
-            )
-
-            response.success
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
-        }
-    }
 
 
 
