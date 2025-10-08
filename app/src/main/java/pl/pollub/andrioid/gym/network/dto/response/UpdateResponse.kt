@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class UpdateBodyMeasurementResponse(
+data class UpdateResponse(
     @Json(name = "message")
     val message: String,
     @Json(name = "last_sync")

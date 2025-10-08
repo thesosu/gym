@@ -4,9 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class AddBodyMeasurementResponse (
-    @Json(name = "id")
-    val id: Int,
+data class DeleteResponse(
     @Json(name = "message")
     val message: String,
     @Json(name = "last_sync")

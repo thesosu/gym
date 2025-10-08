@@ -19,14 +19,17 @@ import pl.pollub.andrioid.gym.network.dto.reguest.VerifyResetCodeRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.WorkoutRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.WorkoutTemplatesRequest
 import pl.pollub.andrioid.gym.network.dto.response.AddEmailResponse
-import pl.pollub.andrioid.gym.network.dto.response.AddBodyMeasurementResponse
-import pl.pollub.andrioid.gym.network.dto.response.UpdateBodyMeasurementResponse
+import pl.pollub.andrioid.gym.network.dto.response.AddResponse
+import pl.pollub.andrioid.gym.network.dto.response.UpdateResponse
 import pl.pollub.andrioid.gym.network.dto.response.ChangePasswordResponse
 import pl.pollub.andrioid.gym.network.dto.response.ChangeUsernameResponse
-import pl.pollub.andrioid.gym.network.dto.response.DeleteBodyMeasurementResponse
 import pl.pollub.andrioid.gym.network.dto.response.DeleteEmailResponse
+import pl.pollub.andrioid.gym.network.dto.response.DeleteResponse
 import pl.pollub.andrioid.gym.network.dto.response.ForgotPasswordResponse
 import pl.pollub.andrioid.gym.network.dto.response.GetBodyMeasurementsResponse
+import pl.pollub.andrioid.gym.network.dto.response.GetExercisesResponse
+import pl.pollub.andrioid.gym.network.dto.response.GetWorkoutTemplatesResponse
+import pl.pollub.andrioid.gym.network.dto.response.GetWorkoutsResponse
 import pl.pollub.andrioid.gym.network.dto.response.RegisterResponse
 import pl.pollub.andrioid.gym.network.dto.response.ResetPasswordResponse
 import pl.pollub.andrioid.gym.network.dto.response.UserLastSyncResponse
@@ -97,20 +100,20 @@ interface ApiService {
     suspend fun addBodyMeasurement(
         @Body request: BodyMeasurementRequest,
         @Header("X-Last-Sync") lastSync: String
-    ): AddBodyMeasurementResponse
+    ): AddResponse
 
     @PUT("bodyMeasurements/{id}")
     suspend fun updateBodyMeasurement(
         @Path("id") id: Int,
         @Body request: BodyMeasurementRequest,
         @Header("X-Last-Sync") lastSync: String
-    ): UpdateBodyMeasurementResponse
+    ): UpdateResponse
 
     @DELETE("bodyMeasurements/{id}")
     suspend fun deleteBodyMeasurement(
         @Path("id") id: Int,
         @Header("X-Last-Sync") lastSync: String
-    ): DeleteBodyMeasurementResponse
+    ): DeleteResponse
 
     @GET("bodyMeasurements")
     suspend fun getUserMeasurements(
@@ -125,63 +128,50 @@ interface ApiService {
     suspend fun addExercise(
         @Body request: ExerciseRequest,
         @Header("X-Last-Sync") lastSync: String
-    ): AddExerciseResponse
+    ): AddResponse
 
     @PUT("exercises/{id}")
     suspend fun updateExercise(
         @Path("id") id: Int,
         @Body request: ExerciseRequest,
         @Header("X-Last-Sync") lastSync: String
-    ): UpdateExerciseResponse
+    ): UpdateResponse
 
     @DELETE("exercises/{id}")
     suspend fun deleteExercise(
         @Path("id") id: Int,
         @Header("X-Last-Sync") lastSync: String
-    ): DeleteExerciseResponse
+    ): DeleteResponse
 
     @GET("exercises")
-    suspend fun getUserExercises(
+    suspend fun getExercises(
         @Query("offset") offset: Int = 0,
         @Query("limit") limit: Int = 20,
         @Query("startDate") startDate: String? = null,
         @Query("endDate") endDate: String
     ): List<GetExercisesResponse>
-    @GET("exercises")
-    suspend fun getGlobalExercises(
-        @Query("offset") offset: Int = 10,
-        @Query("limit") limit: Int = 1,
-        @Query("startDate") startDate: String? = null,
-        @Query("endDate") endDate: String
-    ): List<GetExercisesResponse>
-    //========================================= muscleGroups =====================================
 
-    @GET("muscleGroups")
-    suspend fun getMuscleGroups(
-        @Query("offset") offset: Int = 10,
-        @Query("limit") limit: Int = 1,
-        @Query("startDate") startDate: String? = null,
-        @Query("endDate") endDate: String
-    ): List<GetMuscleGroupsResponse>
+
+
     //========================================= workoutTemplate =====================================
     @POST("workoutTemplates")
     suspend fun addWorkoutTemplate(
         @Body request: WorkoutTemplatesRequest,
         @Header("X-Last-Sync") lastSync: String
-    ): AddWorkoutTemplatesResponse
+    ): AddResponse
 
     @PUT("workoutTemplates/{id}")
     suspend fun updateWorkoutTemplate(
         @Path("id") id: Int,
         @Body request: WorkoutTemplatesRequest,
         @Header("X-Last-Sync") lastSync: String
-    ): UpdateWorkoutTemplatesResponse
+    ): UpdateResponse
 
     @DELETE("workoutTemplates/{id}")
     suspend fun deleteWorkoutTemplate(
         @Path("id") id: Int,
         @Header("X-Last-Sync") lastSync: String
-    ): DeleteWorkoutTemplatesResponse
+    ): DeleteResponse
 
     @GET("workoutTemplates")
     suspend fun getUserWorkoutTemplates(
@@ -190,29 +180,29 @@ interface ApiService {
         @Query("startDate") startDate: String? = null,  //ofset limit itd
         @Query("endDate") endDate: String
     ): List<GetWorkoutTemplatesResponse>
-    @GET("workoutTemplates/{id}")
-    suspend fun getDetailWorkoutTemplates(
-        @Path("id") id: Int,
-    ): List<GetWorkoutTemplatesResponse>
+    //@GET("workoutTemplates/{id}")
+    //suspend fun getDetailWorkoutTemplates(        potrzebne?
+    //    @Path("id") id: Int,
+    //): List<GetWorkoutTemplatesResponse>
     //========================================= workout =====================================
     @POST("workouts")
     suspend fun addWorkout(
         @Body request: WorkoutRequest,
         @Header("X-Last-Sync") lastSync: String
-    ): AddWorkoutResponse
+    ): AddResponse
 
     @PUT("workouts/{id}")
     suspend fun updateWorkout(
         @Path("id") id: Int,
         @Body request: WorkoutRequest,
         @Header("X-Last-Sync") lastSync: String
-    ): UpdateWorkoutResponse
+    ): UpdateResponse
 
     @DELETE("workouts/{id}")
     suspend fun deleteWorkout(
         @Path("id") id: Int,
         @Header("X-Last-Sync") lastSync: String
-    ): DeleteWorkoutResponse
+    ): DeleteResponse
 
     @GET("workouts")
     suspend fun getUserWorkouts(

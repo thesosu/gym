@@ -12,18 +12,18 @@ data class WorkoutRequest(
     @Json(name = "date")
     val date: String,
     @Json(name = "exercises")
-    val exercises: List<WorkoutExerciseDto>
+    val exercises: List<WorkoutExerciseRequest>
 )
 
 @JsonClass(generateAdapter = true)
-data class WorkoutExerciseDto(
+data class WorkoutExerciseRequest(
     @Json(name = "id")
     val id: Int,
     @Json(name = "sets")
-    val sets: List<WorkoutSetDto>
+    val sets: List<SetRequest>
 )
 @JsonClass(generateAdapter = true)
-data class WorkoutSetDto(
+data class SetRequest(
     @Json(name = "reps")
     val reps: Int,
     @Json(name = "weight")
