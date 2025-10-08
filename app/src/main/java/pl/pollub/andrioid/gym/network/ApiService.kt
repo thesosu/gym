@@ -5,6 +5,7 @@ import pl.pollub.andrioid.gym.network.dto.reguest.BodyMeasurementRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.ChangePasswordRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.ChangeUsernameRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.DeleteEmailRequest
+import pl.pollub.andrioid.gym.network.dto.reguest.ExerciseRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.ForgotPasswordRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.GoogleLoginRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.LoginRequest
@@ -15,6 +16,8 @@ import pl.pollub.andrioid.gym.network.dto.reguest.RegisterRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.ResetPasswordRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.VerifyEmailRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.VerifyResetCodeRequest
+import pl.pollub.andrioid.gym.network.dto.reguest.WorkoutRequest
+import pl.pollub.andrioid.gym.network.dto.reguest.WorkoutTemplatesRequest
 import pl.pollub.andrioid.gym.network.dto.response.AddEmailResponse
 import pl.pollub.andrioid.gym.network.dto.response.AddBodyMeasurementResponse
 import pl.pollub.andrioid.gym.network.dto.response.UpdateBodyMeasurementResponse
