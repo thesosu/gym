@@ -19,6 +19,12 @@ import pl.pollub.andrioid.gym.db.relationships.UserWithWorkouts
 @Dao
 interface UserDao {
 
+    @Query("SELECT last_sync FROM users WHERE isLoggedIn = 1 LIMIT 1")
+    suspend fun getLastSync(): String?
+
+    @Query("UPDATE users SET last_sync = :lastSync WHERE isLoggedIn = 1")
+    suspend fun updateLastSync(lastSync: String)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUser(user: User): Long
 

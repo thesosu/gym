@@ -1,25 +1,43 @@
 package pl.pollub.andrioid.gym.network
 
+import pl.pollub.andrioid.gym.network.dto.reguest.AddEmailRequest
+import pl.pollub.andrioid.gym.network.dto.reguest.BodyMeasurementRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.ChangePasswordRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.ChangeUsernameRequest
-import pl.pollub.andrioid.gym.network.dto.reguest.ExerciseDto
-import pl.pollub.andrioid.gym.network.dto.response.ExerciseResponse
+import pl.pollub.andrioid.gym.network.dto.reguest.DeleteEmailRequest
+import pl.pollub.andrioid.gym.network.dto.reguest.ForgotPasswordRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.GoogleLoginRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.LoginRequest
 import pl.pollub.andrioid.gym.network.dto.response.LoginResponse
 import pl.pollub.andrioid.gym.network.dto.response.LogoutResponse
 import pl.pollub.andrioid.gym.network.dto.response.RefreshResponse
 import pl.pollub.andrioid.gym.network.dto.reguest.RegisterRequest
+import pl.pollub.andrioid.gym.network.dto.reguest.ResetPasswordRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.VerifyEmailRequest
+import pl.pollub.andrioid.gym.network.dto.reguest.VerifyResetCodeRequest
+import pl.pollub.andrioid.gym.network.dto.response.AddEmailResponse
+import pl.pollub.andrioid.gym.network.dto.response.AddBodyMeasurementResponse
+import pl.pollub.andrioid.gym.network.dto.response.UpdateBodyMeasurementResponse
 import pl.pollub.andrioid.gym.network.dto.response.ChangePasswordResponse
 import pl.pollub.andrioid.gym.network.dto.response.ChangeUsernameResponse
+import pl.pollub.andrioid.gym.network.dto.response.DeleteEmailResponse
+import pl.pollub.andrioid.gym.network.dto.response.ForgotPasswordResponse
+import pl.pollub.andrioid.gym.network.dto.response.GetBodyMeasurementsResponse
 import pl.pollub.andrioid.gym.network.dto.response.RegisterResponse
+import pl.pollub.andrioid.gym.network.dto.response.ResetPasswordResponse
+import pl.pollub.andrioid.gym.network.dto.response.UserLastSyncResponse
 import pl.pollub.andrioid.gym.network.dto.response.VerifyEmailResponse
+import pl.pollub.andrioid.gym.network.dto.response.VerifyResetCodeResponse
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -50,11 +68,54 @@ interface ApiService {
     suspend fun verifyEmail(@Body request: VerifyEmailRequest): VerifyEmailResponse
 
     @POST("auth/verify-reset-code")
-    suspend fun verifyResetPasswordCode(@Body request: VerifyResetCodeRequest): VerifyResetCodeResponse
+    suspend fun verifyResetPasswordCode(@Body request: VerifyResetCodeRequest): VerifyResetCodeResponse //pomyśleć jak zapisywać token
+
+    @POST("auth/reset-password")
+    suspend fun resetPassword(@Body request: ResetPasswordRequest): ResetPasswordResponse
+
+    @POST("auth/forgot-password")
+    suspend fun forgotPassword(@Body request: ForgotPasswordRequest): ForgotPasswordResponse
+
+    @PATCH("users/me/email")
+    suspend fun addEmail(@Body request: AddEmailRequest): AddEmailResponse
+
+    @DELETE("users/me/email")
+    suspend fun deleteUserEmail(@Body request: DeleteEmailRequest): DeleteEmailResponse
+
+
+    @GET("users/me/last-sync")
+    suspend fun getUserLastSync(): UserLastSyncResponse
+
+    //========================================= Sync =====================================
+
+    @POST("bodyMeasurements")
+    suspend fun addBodyMeasurement(
+        @Body request: BodyMeasurementRequest,
+        @Header("X-Last-Sync") lastSync: String
+    ): AddBodyMeasurementResponse
+
+    @PUT("bodyMeasurements/{id}")
+    suspend fun updateBodyMeasurement(
+        @Path("id") id: Int,
+        @Body request: BodyMeasurementRequest,
+        @Header("X-Last-Sync") lastSync: String
+    ): UpdateBodyMeasurementResponse
+
+    @DELETE("bodyMeasurements/{id}")
+    suspend fun deleteBodyMeasurement(
+        @Path("id") id: Int,
+        @Header("X-Last-Sync") lastSync: String
+    ): DeleteBodyMeasurementResponse
+
+    @GET("bodyMeasurements")
+    suspend fun getUserMeasurements(
+        @Query("offset") offset: Int = 0,
+        @Query("limit") limit: Int = 20,
+        @Query("startDate") startDate: String? = null,
+        @Query("endDate") endDate: String
+    ): List<GetBodyMeasurementsResponse>
 
 
 
-    @POST("exercises")
-    suspend fun insertExercise(@Body exercise: ExerciseDto):ExerciseResponse
 
 }

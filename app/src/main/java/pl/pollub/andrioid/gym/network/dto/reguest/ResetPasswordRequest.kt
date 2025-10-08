@@ -4,9 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class VerifyResetCodeRequest(
-    @Json(name = "username")
-    val username: String,
-    @Json(name = "code")
-    val code: String
+data class ResetPasswordRequest(
+    @Json(name = "password")
+    val password: String
 )

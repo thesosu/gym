@@ -3,21 +3,9 @@ package pl.pollub.andrioid.gym.network
 import android.content.Context
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Response
 
-class AuthInterceptor(private val tokenManager: TokenManager) : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val token = tokenManager.getToken()
 
-        val request = chain.request().newBuilder()
-        if (!token.isNullOrEmpty()) {
-            request.addHeader("Authorization", "Bearer $token")
-        }
-        return chain.proceed(request.build())
-    }
-}
 
 object ApiClient {
 

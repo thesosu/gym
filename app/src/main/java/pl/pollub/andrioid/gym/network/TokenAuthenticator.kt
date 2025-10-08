@@ -8,7 +8,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 
-class TokenAuthenticator(private val tokenManager: TokenManager, private val cookieJar: RefreshCookieJar) : Authenticator {
+class TokenAuthenticator(
+    private val tokenManager: TokenManager,
+    private val cookieJar: RefreshCookieJar
+) : Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {
         if (response.request.header("Authorization") != null && responseCount(response) >= 2) {
             return null
