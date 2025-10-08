@@ -39,8 +39,13 @@ class UserRepository(context: Context):UserDao{
     fun getToken(): String? = tokenManager.getToken()
 
     fun logout() = tokenManager.clearToken()
+    override suspend fun getLastSync(): String? {
+        TODO("Not yet implemented")
+    }
 
-
+    override suspend fun updateLastSync(lastSync: String) {
+        TODO("Not yet implemented")
+    }
 
 
     override suspend fun insertUser(user: User): Long = withContext(Dispatchers.IO){

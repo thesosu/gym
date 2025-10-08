@@ -110,7 +110,7 @@ fun Greeting(mainViewModel:MainViewModel) {
                 scope.launch {
 
                     if (users.isEmpty()) {
-                        val uId = mainViewModel.insertUser(User( userName = "user", sex = true, email = "email"))
+                        val uId = mainViewModel.insertUser(User( userName = "user", isLoggedIn = true, email = "email"))
                         val eId = mainViewModel.insertExercise(Exercise(userId = uId.toInt(), name = " ex$time", description = "ok"))
                         val mgId = mainViewModel.insertMuscleGroup(MuscleGroup(name = "mg $time"))
                         mainViewModel.insertExerciseMuscleGroup(ExerciseMuscleGroup(muscleGroupId = mgId.toInt(), exerciseId = eId.toInt()))

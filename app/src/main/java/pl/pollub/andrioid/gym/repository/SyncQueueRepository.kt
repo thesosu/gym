@@ -24,7 +24,7 @@ class SyncQueueRepository(context: Context): SyncQueueDao {
         for (q in syncQueue){
             try{
                 when(q.tableName){
-                    "exercises" -> syncExercise(q)
+                    //"exercises" -> syncExercise(q)
                     "muscle_groups" -> syncMuscleGroup(q)
                     "body_measurements" -> syncBodyMeasurement(q)
                     "workouts" -> syncWorkout(q)
@@ -38,47 +38,47 @@ class SyncQueueRepository(context: Context): SyncQueueDao {
 
         }
     }
-    private suspend fun syncExercise(q: SyncQueue){
-        when{
-            //Add
-            q.globalId == null && q.localId != null ->{
-
-                val exercise = exerciseDao.getExerciseById(q.localId).first()
-                val muscleGroupIds = exerciseDao.getMuscleGroupIdsForExercise(q.localId)
-                val request = ExerciseDto(
-                    id = null,
-                    name = exercise.name,
-                    description = exercise.description,
-                    muscleGroups = muscleGroupIds
-                )
-
-                try {
-                    val response = api.insertExercise(request)
-                    exercise.globalId = response.id
-                    exerciseDao.updateExercise(exercise)
-                    syncQueueDao.deleteSyncQueue(q)
-                    println("ok: "+request)
-
-                }catch (e:Exception){
-                    println("blad: "+e.message)
-                }
-
-
-            }
-            //Update
-            q.globalId != null && q.localId != null ->{
-
-            }
-            //Delete
-            q.globalId != null && q.localId == null ->{
-
-            }
-        }
-
-
-
-
-    }
+//    private suspend fun syncExercise(q: SyncQueue){
+//        when{
+//            //Add
+//            q.globalId == null && q.localId != null ->{
+//
+//                val exercise = exerciseDao.getExerciseById(q.localId).first()
+//                val muscleGroupIds = exerciseDao.getMuscleGroupIdsForExercise(q.localId)
+//                val request = ExerciseDto(
+//                    id = null,
+//                    name = exercise.name,
+//                    description = exercise.description,
+//                    muscleGroups = muscleGroupIds
+//                )
+//
+//                try {
+//                    val response = api.insertExercise(request)
+//                    exercise.globalId = response.id
+//                    exerciseDao.updateExercise(exercise)
+//                    syncQueueDao.deleteSyncQueue(q)
+//                    println("ok: "+request)
+//
+//                }catch (e:Exception){
+//                    println("blad: "+e.message)
+//                }
+//
+//
+//            }
+//            //Update
+//            q.globalId != null && q.localId != null ->{
+//
+//            }
+//            //Delete
+//            q.globalId != null && q.localId == null ->{
+//
+//            }
+//        }
+//
+//
+//
+//
+//    }
     private suspend fun syncMuscleGroup(q: SyncQueue){
 
     }

@@ -8,11 +8,11 @@ data class GetExercisesResponse(
     @Json(name = "has_more")
     val hasMore: Boolean,
     @Json(name = "date")
-    val data: List<ExerciseResponse>
+    val data: List<ExerciseDto>
 
 )
 @JsonClass(generateAdapter = true)
-data class ExerciseResponse(
+data class ExerciseDto(
     @Json(name = "id")
     val id: Int,
     @Json(name = "name")

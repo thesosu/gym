@@ -180,10 +180,7 @@ interface ApiService {
         @Query("startDate") startDate: String? = null,  //ofset limit itd
         @Query("endDate") endDate: String
     ): List<GetWorkoutTemplatesResponse>
-    //@GET("workoutTemplates/{id}")
-    //suspend fun getDetailWorkoutTemplates(        potrzebne?
-    //    @Path("id") id: Int,
-    //): List<GetWorkoutTemplatesResponse>
+
     //========================================= workout =====================================
     @POST("workouts")
     suspend fun addWorkout(

@@ -14,6 +14,8 @@ data class GetWorkoutsResponse(
 data class WorkoutResponse(
     @Json(name = "id")
     val id: Int,
+    @Json(name = "deleted")
+    val deleted: Boolean,
     @Json(name = "duration")
     val duration: Int?,
     @Json(name = "date")
@@ -28,6 +30,10 @@ data class WorkoutResponse(
 data class WorkoutExerciseResponse(
     @Json(name = "id")
     val id: Int,
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "position")
+    val position: Int,
     @Json(name = "sets")
     val sets: List<WorkoutSetResponse>
 )
