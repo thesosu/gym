@@ -20,6 +20,7 @@ import pl.pollub.andrioid.gym.network.dto.response.AddBodyMeasurementResponse
 import pl.pollub.andrioid.gym.network.dto.response.UpdateBodyMeasurementResponse
 import pl.pollub.andrioid.gym.network.dto.response.ChangePasswordResponse
 import pl.pollub.andrioid.gym.network.dto.response.ChangeUsernameResponse
+import pl.pollub.andrioid.gym.network.dto.response.DeleteBodyMeasurementResponse
 import pl.pollub.andrioid.gym.network.dto.response.DeleteEmailResponse
 import pl.pollub.andrioid.gym.network.dto.response.ForgotPasswordResponse
 import pl.pollub.andrioid.gym.network.dto.response.GetBodyMeasurementsResponse
@@ -87,6 +88,7 @@ interface ApiService {
     suspend fun getUserLastSync(): UserLastSyncResponse
 
     //========================================= Sync =====================================
+    //========================================= bodyMeasurements =====================================
 
     @POST("bodyMeasurements")
     suspend fun addBodyMeasurement(
@@ -115,6 +117,107 @@ interface ApiService {
         @Query("endDate") endDate: String
     ): List<GetBodyMeasurementsResponse>
 
+    //========================================= exercises =====================================
+    @POST("exercises")
+    suspend fun addExercise(
+        @Body request: ExerciseRequest,
+        @Header("X-Last-Sync") lastSync: String
+    ): AddExerciseResponse
+
+    @PUT("exercises/{id}")
+    suspend fun updateExercise(
+        @Path("id") id: Int,
+        @Body request: ExerciseRequest,
+        @Header("X-Last-Sync") lastSync: String
+    ): UpdateExerciseResponse
+
+    @DELETE("exercises/{id}")
+    suspend fun deleteExercise(
+        @Path("id") id: Int,
+        @Header("X-Last-Sync") lastSync: String
+    ): DeleteExerciseResponse
+
+    @GET("exercises")
+    suspend fun getUserExercises(
+        @Query("offset") offset: Int = 0,
+        @Query("limit") limit: Int = 20,
+        @Query("startDate") startDate: String? = null,
+        @Query("endDate") endDate: String
+    ): List<GetExercisesResponse>
+    @GET("exercises")
+    suspend fun getGlobalExercises(
+        @Query("offset") offset: Int = 10,
+        @Query("limit") limit: Int = 1,
+        @Query("startDate") startDate: String? = null,
+        @Query("endDate") endDate: String
+    ): List<GetExercisesResponse>
+    //========================================= muscleGroups =====================================
+
+    @GET("muscleGroups")
+    suspend fun getMuscleGroups(
+        @Query("offset") offset: Int = 10,
+        @Query("limit") limit: Int = 1,
+        @Query("startDate") startDate: String? = null,
+        @Query("endDate") endDate: String
+    ): List<GetMuscleGroupsResponse>
+    //========================================= workoutTemplate =====================================
+    @POST("workoutTemplates")
+    suspend fun addWorkoutTemplate(
+        @Body request: WorkoutTemplatesRequest,
+        @Header("X-Last-Sync") lastSync: String
+    ): AddWorkoutTemplatesResponse
+
+    @PUT("workoutTemplates/{id}")
+    suspend fun updateWorkoutTemplate(
+        @Path("id") id: Int,
+        @Body request: WorkoutTemplatesRequest,
+        @Header("X-Last-Sync") lastSync: String
+    ): UpdateWorkoutTemplatesResponse
+
+    @DELETE("workoutTemplates/{id}")
+    suspend fun deleteWorkoutTemplate(
+        @Path("id") id: Int,
+        @Header("X-Last-Sync") lastSync: String
+    ): DeleteWorkoutTemplatesResponse
+
+    @GET("workoutTemplates")
+    suspend fun getUserWorkoutTemplates(
+        @Query("offset") offset: Int = 0,
+        @Query("limit") limit: Int = 20,
+        @Query("startDate") startDate: String? = null,  //ofset limit itd
+        @Query("endDate") endDate: String
+    ): List<GetWorkoutTemplatesResponse>
+    @GET("workoutTemplates/{id}")
+    suspend fun getDetailWorkoutTemplates(
+        @Path("id") id: Int,
+    ): List<GetWorkoutTemplatesResponse>
+    //========================================= workout =====================================
+    @POST("workouts")
+    suspend fun addWorkout(
+        @Body request: WorkoutRequest,
+        @Header("X-Last-Sync") lastSync: String
+    ): AddWorkoutResponse
+
+    @PUT("workouts/{id}")
+    suspend fun updateWorkout(
+        @Path("id") id: Int,
+        @Body request: WorkoutRequest,
+        @Header("X-Last-Sync") lastSync: String
+    ): UpdateWorkoutResponse
+
+    @DELETE("workouts/{id}")
+    suspend fun deleteWorkout(
+        @Path("id") id: Int,
+        @Header("X-Last-Sync") lastSync: String
+    ): DeleteWorkoutResponse
+
+    @GET("workouts")
+    suspend fun getUserWorkouts(
+        @Query("offset") offset: Int = 0,
+        @Query("limit") limit: Int = 5,
+        @Query("startDate") startDate: String? = null,
+        @Query("endDate") endDate: String
+    ): List<GetWorkoutsResponse>
 
 
 
