@@ -3,7 +3,6 @@ package pl.pollub.andrioid.gym.viewModel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +20,6 @@ import pl.pollub.andrioid.gym.repository.SyncQueueRepository
 import pl.pollub.andrioid.gym.repository.UserRepository
 import pl.pollub.andrioid.gym.repository.WorkoutRepository
 import pl.pollub.andrioid.gym.repository.WorkoutTemplateRepository
-import kotlin.contracts.Returns
 
 class MainViewModel(app: Application): AndroidViewModel(app) {
     private val bodyMeasurementRepository = BodyMeasurementRepository(app.applicationContext)
@@ -39,7 +37,7 @@ class MainViewModel(app: Application): AndroidViewModel(app) {
 
     fun add(){
         viewModelScope.launch {
-                syncQueueRepository.addToServer()
+                syncQueueRepository.uploadToServer()
 
         }
     }

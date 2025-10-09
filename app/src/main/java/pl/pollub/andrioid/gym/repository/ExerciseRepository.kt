@@ -25,7 +25,8 @@ class ExerciseRepository(context: Context):ExerciseDao, ExerciseMuscleGroupDao {
 
         val q =SyncQueue(
             tableName = "exercises",
-            localId = newId.toInt()
+            localId = newId.toInt(),
+            userId =
         )
         syncQueueDao.insertSyncQueue(q)
         newId

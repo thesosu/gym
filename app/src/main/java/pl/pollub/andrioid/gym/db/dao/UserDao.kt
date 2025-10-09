@@ -13,6 +13,7 @@ import pl.pollub.andrioid.gym.db.relationships.UserWithBodyMeasurements
 import pl.pollub.andrioid.gym.db.relationships.UserWithExercises
 import pl.pollub.andrioid.gym.db.relationships.UserWithExercisesAndMuscleGroups
 import pl.pollub.andrioid.gym.db.relationships.UserWithExercisesAndSets
+import pl.pollub.andrioid.gym.db.relationships.UserWithSyncQueues
 import pl.pollub.andrioid.gym.db.relationships.UserWithWorkoutTemplates
 import pl.pollub.andrioid.gym.db.relationships.UserWithWorkouts
 
@@ -22,6 +23,10 @@ interface UserDao {
     @Query("SELECT last_sync FROM users WHERE isLoggedIn = 1 LIMIT 1")
     suspend fun getLastSync(): String?
 
+    @Query("SELECT user_id FROM users WHERE isLoggedIn = 1 LIMIT 1")
+    suspend fun getLoggedInUserId(): Int
+    @Query("SELECT EXISTS(SELECT 1 FROM users WHERE isLoggedIn = 1)")
+    suspend fun isAnyUserLoggedIn(): Boolean
     @Query("UPDATE users SET last_sync = :lastSync WHERE isLoggedIn = 1")
     suspend fun updateLastSync(lastSync: String)
 
@@ -58,6 +63,10 @@ interface UserDao {
     @Transaction
     @Query("SELECT * FROM users WHERE user_id = :id")
     fun getUserWithBodyMeasurementsById(id: Int): Flow<UserWithBodyMeasurements>
+
+    @Transaction
+    @Query("SELECT * FROM users WHERE user_id = :id")
+    fun getUserWithSyncQueuesById(id: Int): UserWithSyncQueues
 
     @Transaction
     @Query("SELECT * FROM users WHERE user_id = :id")

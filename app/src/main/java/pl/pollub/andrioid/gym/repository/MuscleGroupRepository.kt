@@ -12,56 +12,23 @@ import pl.pollub.andrioid.gym.db.relationships.MuscleGroupWithExercises
 
 class MuscleGroupRepository(context: Context): MuscleGroupDao {
     private val muscleGroupDao = AppDb.getInstance(context).muscleGroupDao()
-    private val syncQueueDao = AppDb.getInstance(context).syncQueueDao()
 
     override suspend fun insertMuscleGroup(muscleGroup: MuscleGroup): Long = withContext(Dispatchers.IO){
         val newId = muscleGroupDao.insertMuscleGroup(muscleGroup)
-        val q =SyncQueue(
-            tableName = "muscle_groups",
-            localId = newId.toInt()
-        )
-        syncQueueDao.insertSyncQueue(q)
         newId
     }
 
     override suspend fun insertMuscleGroups(muscleGroups: List<MuscleGroup>): List<Long> = withContext(Dispatchers.IO){
         val newId = muscleGroupDao.insertMuscleGroups(muscleGroups)
-        for(i in newId){
-            val q = SyncQueue(
-                tableName = "muscle_groups",
-                localId = i.toInt()
-            )
-            syncQueueDao.insertSyncQueue(q)
-        }
         newId
     }
 
     override suspend fun updateMuscleGroup(muscleGroup: MuscleGroup) = withContext(Dispatchers.IO){
         muscleGroupDao.updateMuscleGroup(muscleGroup)
-        if(syncQueueDao.getSyncQueueByTableName(muscleGroup.muscleGroupId,"muscle_groups") == null){
-            val q = SyncQueue(
-                tableName = "muscle_groups",
-                localId = muscleGroup.muscleGroupId,
-                globalId = muscleGroup.globalId
-            )
-            syncQueueDao.insertSyncQueue(q)
-        }
+
     }
 
     override suspend fun deleteMuscleGroup(muscleGroup: MuscleGroup) = withContext(Dispatchers.IO){
-        if(muscleGroup.globalId != null){
-            val q = SyncQueue(
-                tableName = "muscle_groups",
-                localId = muscleGroup.muscleGroupId,
-                globalId = muscleGroup.globalId
-            )
-            syncQueueDao.insertSyncQueue(q)
-        }else{
-            val existing = syncQueueDao.getSyncQueueByTableName(muscleGroup.muscleGroupId,"muscle_groups")
-            if(existing != null){
-                syncQueueDao.deleteSyncQueue(existing)
-            }
-        }
         muscleGroupDao.deleteMuscleGroup(muscleGroup)
     }
 
