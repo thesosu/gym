@@ -1,4 +1,4 @@
-package pl.pollub.andrioid.gym.repository;
+package pl.pollub.andrioid.gym.repository
 
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
@@ -12,6 +12,7 @@ import pl.pollub.andrioid.gym.db.relationships.UserWithBodyMeasurements
 import pl.pollub.andrioid.gym.db.relationships.UserWithExercises
 import pl.pollub.andrioid.gym.db.relationships.UserWithExercisesAndMuscleGroups
 import pl.pollub.andrioid.gym.db.relationships.UserWithExercisesAndSets
+import pl.pollub.andrioid.gym.db.relationships.UserWithSyncQueues
 import pl.pollub.andrioid.gym.db.relationships.UserWithWorkoutTemplates
 import pl.pollub.andrioid.gym.db.relationships.UserWithWorkouts
 import pl.pollub.andrioid.gym.network.ApiClient
@@ -40,11 +41,15 @@ class UserRepository(context: Context):UserDao{
 
     fun logout() = tokenManager.clearToken()
     override suspend fun getLastSync(): String? {
-        TODO("Not yet implemented")
+        return userDao.getLastSync()
+    }
+
+    override suspend fun getLoggedInUserId(): Int? {
+        return userDao.getLoggedInUserId()
     }
 
     override suspend fun updateLastSync(lastSync: String) {
-        TODO("Not yet implemented")
+        userDao.updateLastSync(lastSync)
     }
 
 
@@ -88,6 +93,10 @@ class UserRepository(context: Context):UserDao{
 
     override fun getUserWithBodyMeasurementsById(id: Int): Flow<UserWithBodyMeasurements> {
         return userDao.getUserWithBodyMeasurementsById(id)
+    }
+
+    override fun getUserWithSyncQueuesById(id: Int): UserWithSyncQueues {
+        return userDao.getUserWithSyncQueuesById(id)
     }
 
     override fun getUserWithExercisesAndMuscleGroupsById(id: Int): Flow<UserWithExercisesAndMuscleGroups> {

@@ -7,7 +7,6 @@ import kotlinx.coroutines.withContext
 import pl.pollub.andrioid.gym.db.AppDb
 import pl.pollub.andrioid.gym.db.dao.MuscleGroupDao
 import pl.pollub.andrioid.gym.db.entity.MuscleGroup
-import pl.pollub.andrioid.gym.db.entity.SyncQueue
 import pl.pollub.andrioid.gym.db.relationships.MuscleGroupWithExercises
 
 class MuscleGroupRepository(context: Context): MuscleGroupDao {

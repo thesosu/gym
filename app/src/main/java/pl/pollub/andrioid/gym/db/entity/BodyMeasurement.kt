@@ -28,6 +28,6 @@ data class BodyMeasurement (
     @ColumnInfo(name = "thigh") val thigh: Float,
     @ColumnInfo(name = "arm") val arm: Float,
     @ColumnInfo(name = "hips") val hips: Float,
-    @ColumnInfo(name = "global_id") val globalId:Int? = null
+    @ColumnInfo(name = "global_id") var globalId:Int? = null
 
 )

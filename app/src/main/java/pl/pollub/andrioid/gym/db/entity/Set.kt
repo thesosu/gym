@@ -22,5 +22,4 @@ data class Set (
     @ColumnInfo(name = "reps") val reps: Int,
     @ColumnInfo(name = "weight") val weight: Float,
     @ColumnInfo(name = "position") val position: Float,
-    @ColumnInfo(name = "global_id") val globalId: Int? = null
 )

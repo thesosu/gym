@@ -7,7 +7,6 @@ import kotlinx.coroutines.withContext
 import pl.pollub.andrioid.gym.db.AppDb
 import pl.pollub.andrioid.gym.db.dao.SetDao
 import pl.pollub.andrioid.gym.db.entity.Set
-import pl.pollub.andrioid.gym.db.entity.SyncQueue
 
 class SetRepository(context: Context): SetDao {
     private val setDao = AppDb.getInstance(context).setDao()

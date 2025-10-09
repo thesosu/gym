@@ -14,16 +14,20 @@ import pl.pollub.andrioid.gym.db.relationships.WorkoutTemplateWithExercises
 import pl.pollub.andrioid.gym.db.relationships.WorkoutTemplateWithWorkouts
 
 class WorkoutTemplateRepository(context: Context): WorkoutTemplateDao, WorkoutTemplateExerciseDao {
-    private val workoutTemplateDao = AppDb.getInstance(context).workoutTemplateDao()
-    private val syncQueueDao = AppDb.getInstance(context).syncQueueDao()
-    private val workoutTemplateExerciseDao = AppDb.getInstance(context).workoutTemplateExerciseDao()
+    private val db = AppDb.getInstance(context)
+    private val workoutTemplateDao = db.workoutTemplateDao()
+    private val syncQueueDao = db.syncQueueDao()
+    private val workoutTemplateExerciseDao = db.workoutTemplateExerciseDao()
+    private val userDao = db.userDao()
 
     override suspend fun insertWorkoutTemplate(workoutTemplate: WorkoutTemplate): Long = withContext(Dispatchers.IO){
         val newId = workoutTemplateDao.insertWorkoutTemplate(workoutTemplate)
+        val userId = userDao.getLoggedInUserId()
 
         val q = SyncQueue(
             tableName = "workoutTemplates",
-            localId = newId.toInt()
+            localId = newId.toInt(),
+            userId = userId
         )
         syncQueueDao.insertSyncQueue(q)
         newId
@@ -31,10 +35,13 @@ class WorkoutTemplateRepository(context: Context): WorkoutTemplateDao, WorkoutTe
 
     override suspend fun insertAllWorkoutTemplates(workoutTemplates: List<WorkoutTemplate>): List<Long> = withContext(Dispatchers.IO){
         val newId = workoutTemplateDao.insertAllWorkoutTemplates(workoutTemplates)
+        val userId = userDao.getLoggedInUserId()
+
         for(i in newId){
             val q = SyncQueue(
                 tableName = "workout_templates",
-                localId = i.toInt()
+                localId = i.toInt(),
+                userId = userId
             )
             syncQueueDao.insertSyncQueue(q)
         }
@@ -44,10 +51,13 @@ class WorkoutTemplateRepository(context: Context): WorkoutTemplateDao, WorkoutTe
     override suspend fun updateWorkoutTemplate(workoutTemplate: WorkoutTemplate) = withContext(Dispatchers.IO){
         workoutTemplateDao.updateWorkoutTemplate(workoutTemplate)
         if(syncQueueDao.getSyncQueueByTableName(workoutTemplate.workoutTemplateId,"workout_templates") == null){
+            val userId = userDao.getLoggedInUserId()
+
             val q = SyncQueue(
                 tableName = "workout_templates",
                 localId = workoutTemplate.workoutTemplateId,
-                globalId = workoutTemplate.globalId
+                globalId = workoutTemplate.globalId,
+                userId = userId
             )
             syncQueueDao.insertSyncQueue(q)
         }
@@ -55,10 +65,13 @@ class WorkoutTemplateRepository(context: Context): WorkoutTemplateDao, WorkoutTe
 
     override suspend fun deleteWorkoutTemplate(workoutTemplate: WorkoutTemplate) = withContext(Dispatchers.IO){
         if(workoutTemplate.globalId != null){
+            val userId = userDao.getLoggedInUserId()
+
             val q = SyncQueue(
                 tableName = "workout_templates",
                 localId = workoutTemplate.workoutTemplateId,
-                globalId = workoutTemplate.globalId
+                globalId = workoutTemplate.globalId,
+                userId = userId
             )
             syncQueueDao.insertSyncQueue(q)
         }else{

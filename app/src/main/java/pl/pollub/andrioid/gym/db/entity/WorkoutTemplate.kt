@@ -20,6 +20,6 @@ data class WorkoutTemplate (
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "workout_template_id") val workoutTemplateId: Int = 0,
     @ColumnInfo(name = "user_id") val userId: Int,
     @ColumnInfo(name = "name")val name: String,
-    @ColumnInfo(name = "global_id") val globalId:Int? =null
+    @ColumnInfo(name = "global_id") var globalId:Int? =null
 )
 

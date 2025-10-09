@@ -27,5 +27,5 @@ data class Workout (
     @ColumnInfo(name = "workout_template_id") val workoutTemplateId: Int,
     @ColumnInfo(name = "date") val date: Long,
     @ColumnInfo(name = "duration") val duration: Int,
-    @ColumnInfo(name = "global_id") val globalId:Int? =null
+    @ColumnInfo(name = "global_id") var globalId:Int? =null
 )

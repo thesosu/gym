@@ -15,18 +15,21 @@ import pl.pollub.andrioid.gym.db.relationships.ExerciseWithWorkoutExercise
 import pl.pollub.andrioid.gym.db.relationships.ExerciseWithWorkoutTemplates
 
 class ExerciseRepository(context: Context):ExerciseDao, ExerciseMuscleGroupDao {
-    private val exerciseDao = AppDb.getInstance(context).exerciseDao()
-    private val syncQueueDao = AppDb.getInstance(context).syncQueueDao()
-    private val exerciseMuscleGroupDao = AppDb.getInstance(context).exerciseMuscleGroupDao()
+
+    private val db = AppDb.getInstance(context)
+    private val exerciseDao = db.exerciseDao()
+    private val syncQueueDao = db.syncQueueDao()
+    private val exerciseMuscleGroupDao = db.exerciseMuscleGroupDao()
+    private val userDao = db.userDao()
 
 
     override suspend fun insertExercise(exercise: Exercise): Long = withContext(Dispatchers.IO){
         val newId = exerciseDao.insertExercise(exercise)
-
+        val userId = userDao.getLoggedInUserId()
         val q =SyncQueue(
             tableName = "exercises",
             localId = newId.toInt(),
-            userId =
+            userId = userId
         )
         syncQueueDao.insertSyncQueue(q)
         newId
@@ -34,10 +37,13 @@ class ExerciseRepository(context: Context):ExerciseDao, ExerciseMuscleGroupDao {
 
     override suspend fun insertExercises(exercises: List<Exercise>): List<Long> = withContext(Dispatchers.IO){
         val newId = exerciseDao.insertExercises(exercises)
+        val userId = userDao.getLoggedInUserId()
+
         for(i in newId){
             val q = SyncQueue(
                 tableName = "exercises",
-                localId = i.toInt()
+                localId = i.toInt(),
+                userId = userId
             )
             syncQueueDao.insertSyncQueue(q)
         }
@@ -46,22 +52,27 @@ class ExerciseRepository(context: Context):ExerciseDao, ExerciseMuscleGroupDao {
 
     override suspend fun updateExercise(exercise: Exercise) = withContext(Dispatchers.IO){
         exerciseDao.updateExercise(exercise)
+        val userId = userDao.getLoggedInUserId()
         if(syncQueueDao.getSyncQueueByTableName(exercise.exerciseId,"exercises") == null){
             val q = SyncQueue(
                 tableName = "exercises",
                 localId = exercise.exerciseId,
-                globalId = exercise.globalId
+                globalId = exercise.globalId,
+                userId = userId
             )
             syncQueueDao.insertSyncQueue(q)
         }
     }
 
     override suspend fun deleteExercise(exercise: Exercise) = withContext(Dispatchers.IO){
+        val userId = userDao.getLoggedInUserId()
+
         if(exercise.globalId != null){
             val q = SyncQueue(
                 tableName = "exercises",
                 localId = exercise.exerciseId,
-                globalId = exercise.globalId
+                globalId = exercise.globalId,
+                userId = userId
             )
             syncQueueDao.insertSyncQueue(q)
         }else{

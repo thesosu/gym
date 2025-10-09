@@ -24,9 +24,7 @@ interface UserDao {
     suspend fun getLastSync(): String?
 
     @Query("SELECT user_id FROM users WHERE isLoggedIn = 1 LIMIT 1")
-    suspend fun getLoggedInUserId(): Int
-    @Query("SELECT EXISTS(SELECT 1 FROM users WHERE isLoggedIn = 1)")
-    suspend fun isAnyUserLoggedIn(): Boolean
+    suspend fun getLoggedInUserId(): Int?
     @Query("UPDATE users SET last_sync = :lastSync WHERE isLoggedIn = 1")
     suspend fun updateLastSync(lastSync: String)
 

@@ -25,7 +25,9 @@ class SyncQueueRepository(context: Context): SyncQueueDao {
 
     suspend fun sync()= withContext(Dispatchers.IO){
         try {
-            if (userDao.isAnyUserLoggedIn()) {
+            val userId = userDao.getLoggedInUserId()
+            if (userId != null) {
+                assignPendingSyncToUser(userId)
                 val lastSyncResponse = api.getUserLastSync().lastSync
                 val lastSyncResponseInstant = Instant.parse(lastSyncResponse)
                 val lastSync = userDao.getLastSync()?.let(Instant::parse)
@@ -41,13 +43,21 @@ class SyncQueueRepository(context: Context): SyncQueueDao {
         }
 
     }
+    private suspend fun assignPendingSyncToUser(userId: Int) {
+        val syncQueue = syncQueueDao.getSyncQueuesByUserId(null)
+        for(q in syncQueue){
+            q.userId =userId
+            syncQueueDao.updateSyncQueue(q)
+        }
+
+    }
     suspend fun downloadFromServer()= withContext(Dispatchers.IO){
 
     }
 
     suspend fun uploadToServer(initialLastSync: String)= withContext(Dispatchers.IO){
         val userId = userDao.getLoggedInUserId()
-        val syncQueue = syncQueueDao.getSyncQueuesByUserId(userId)
+        val syncQueue = syncQueueDao.getSyncQueuesByUserId(userId!!)
         var currentLastSync = initialLastSync
 
         for (q in syncQueue){
@@ -84,7 +94,8 @@ class SyncQueueRepository(context: Context): SyncQueueDao {
                 q.globalId == null && exercise != null -> {
                     val response = api.addExercise(
                         request = request!!,
-                        lastSync = currentLastSync)
+                        lastSync = currentLastSync
+                    )
                     exercise.globalId = response.id
                     exerciseDao.updateExercise(exercise)
                     syncQueueDao.deleteSyncQueue(q)
@@ -96,7 +107,7 @@ class SyncQueueRepository(context: Context): SyncQueueDao {
                 // Update
                 q.globalId != null && exercise != null -> {
                     val response = api.updateExercise(
-                        id = q.globalId,
+                        id = q.globalId!!,
                         request = request!!,
                         lastSync = currentLastSync,
                     )
@@ -110,7 +121,7 @@ class SyncQueueRepository(context: Context): SyncQueueDao {
                 // Delete
                 q.globalId != null && exercise == null -> {
                     val response = api.deleteExercise(
-                        id = q.globalId,
+                        id = q.globalId!!,
                         lastSync = currentLastSync
                     )
                     syncQueueDao.deleteSyncQueue(q)
@@ -157,15 +168,16 @@ class SyncQueueRepository(context: Context): SyncQueueDao {
         syncQueueDao.deleteSyncQueue(syncQueue)
     }
 
-    override fun getSyncQueueById(id: Int): SyncQueue {
+
+    override fun getSyncQueueById(id: Int?): SyncQueue {
         return syncQueueDao.getSyncQueueById(id)
     }
 
-    override fun getSyncQueuesByUserId(id: Int): List<SyncQueue> {
+    override fun getSyncQueuesByUserId(id: Int?): List<SyncQueue> {
         return syncQueueDao.getSyncQueuesByUserId(id)
     }
 
-    override fun getSyncQueueByTableName(id: Int, tn: String): SyncQueue? {
+    override fun getSyncQueueByTableName(id: Int?, tn: String): SyncQueue? {
         return syncQueueDao.getSyncQueueByTableName(id,tn)
     }
 }

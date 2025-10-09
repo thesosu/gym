@@ -26,6 +26,6 @@ data class WorkoutExercise (
     @ColumnInfo(name = "exercise_id")val exerciseId: Int,
     @ColumnInfo(name = "workout_id")val workoutId: Int,
     @ColumnInfo(name = "position")val position: Int = 1,
-    @ColumnInfo(name = "global_id") val globalId:Int? =null
+    @ColumnInfo(name = "global_id") var globalId:Int? =null
 
 )
