@@ -29,4 +29,7 @@ interface BodyMeasurementDao {
 
     @Delete
     suspend fun deleteBodyMeasurement(bodyMeasurement: BodyMeasurement)
+
+    @Query("DELETE FROM body_measurements WHERE global_id = :id")
+    suspend fun deleteBodyMeasurementByGlobalId(id: Int)
 }

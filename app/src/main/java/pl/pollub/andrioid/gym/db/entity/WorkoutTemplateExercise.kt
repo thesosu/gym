@@ -24,7 +24,7 @@ import androidx.room.Index
 data class WorkoutTemplateExercise (
     @ColumnInfo(name = "workout_template_id") val workoutTemplateId: Int,
     @ColumnInfo(name = "exercise_id") val exerciseId:Int,
-    @ColumnInfo(name = "position") val  position:Int = 1
+    @ColumnInfo(name = "position") val position:Int = 1
 
 
 )

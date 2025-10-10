@@ -19,7 +19,7 @@ import pl.pollub.andrioid.gym.network.ApiClient
 import pl.pollub.andrioid.gym.network.TokenManager
 import pl.pollub.andrioid.gym.network.dto.reguest.LoginRequest
 
-class UserRepository(context: Context):UserDao{
+class UserRepository(context: Context){
     private val userDao = AppDb.getInstance(context).userDao()
     private val api = ApiClient.create(context)
 
@@ -40,70 +40,70 @@ class UserRepository(context: Context):UserDao{
     fun getToken(): String? = tokenManager.getToken()
 
     fun logout() = tokenManager.clearToken()
-    override suspend fun getLastSync(): String? {
+    suspend fun getLastSync(): String? {
         return userDao.getLastSync()
     }
 
-    override suspend fun getLoggedInUserId(): Int? {
+    suspend fun getLoggedInUserId(): Int? {
         return userDao.getLoggedInUserId()
     }
 
-    override suspend fun updateLastSync(lastSync: String) {
+    suspend fun updateLastSync(lastSync: String) {
         userDao.updateLastSync(lastSync)
     }
 
 
-    override suspend fun insertUser(user: User): Long = withContext(Dispatchers.IO){
+    suspend fun insertUser(user: User): Long = withContext(Dispatchers.IO){
         val newId = userDao.insertUser(user)
         newId
     }
 
-    override suspend fun insertAllUsers(users: List<User>): List<Long> = withContext(Dispatchers.IO){
+    suspend fun insertAllUsers(users: List<User>): List<Long> = withContext(Dispatchers.IO){
         val newId = userDao.insertAllUsers(users)
         newId
     }
 
-    override suspend fun updateUser(user: User) = withContext(Dispatchers.IO){
+    suspend fun updateUser(user: User) = withContext(Dispatchers.IO){
         userDao.updateUser(user)
     }
 
-    override suspend fun deleteUser(user: User) = withContext(Dispatchers.IO){
+    suspend fun deleteUser(user: User) = withContext(Dispatchers.IO){
         userDao.deleteUser(user)
     }
 
-    override fun getUserById(id: Int): Flow<User> {
+    fun getUserById(id: Int): Flow<User> {
         return userDao.getUserById(id)
     }
 
-    override fun getAllUsers(): Flow<List<User>> {
+    fun getAllUsers(): Flow<List<User>> {
         return userDao.getAllUsers()
     }
 
-    override fun getUserWithWorkoutsById(id: Int): Flow<UserWithWorkouts> {
+    fun getUserWithWorkoutsById(id: Int): Flow<UserWithWorkouts> {
         return userDao.getUserWithWorkoutsById(id)
     }
 
-    override fun getUserWithExercisesById(id: Int): Flow<UserWithExercises> {
+    fun getUserWithExercisesById(id: Int): Flow<UserWithExercises> {
         return userDao.getUserWithExercisesById(id)
     }
 
-    override fun getUserWithWorkoutTemplatesById(id: Int): Flow<UserWithWorkoutTemplates> {
+    fun getUserWithWorkoutTemplatesById(id: Int): Flow<UserWithWorkoutTemplates> {
         return userDao.getUserWithWorkoutTemplatesById(id)
     }
 
-    override fun getUserWithBodyMeasurementsById(id: Int): Flow<UserWithBodyMeasurements> {
+    fun getUserWithBodyMeasurementsById(id: Int): Flow<UserWithBodyMeasurements> {
         return userDao.getUserWithBodyMeasurementsById(id)
     }
 
-    override fun getUserWithSyncQueuesById(id: Int): UserWithSyncQueues {
+    fun getUserWithSyncQueuesById(id: Int): UserWithSyncQueues {
         return userDao.getUserWithSyncQueuesById(id)
     }
 
-    override fun getUserWithExercisesAndMuscleGroupsById(id: Int): Flow<UserWithExercisesAndMuscleGroups> {
+    fun getUserWithExercisesAndMuscleGroupsById(id: Int): Flow<UserWithExercisesAndMuscleGroups> {
         return userDao.getUserWithExercisesAndMuscleGroupsById(id)
     }
 
-    override fun getUserWithExercisesAndSetsById(id: Int): Flow<UserWithExercisesAndSets> {
+    fun getUserWithExercisesAndSetsById(id: Int): Flow<UserWithExercisesAndSets> {
         return userDao.getUserWithExercisesAndSetsById(id)
     }
 }

@@ -121,7 +121,7 @@ interface ApiService {
         @Query("limit") limit: Int = 20,
         @Query("startDate") startDate: String? = null,
         @Query("endDate") endDate: String
-    ): List<GetBodyMeasurementsResponse>
+    ): GetBodyMeasurementsResponse
 
     //========================================= exercises =====================================
     @POST("exercises")
@@ -149,7 +149,7 @@ interface ApiService {
         @Query("limit") limit: Int = 20,
         @Query("startDate") startDate: String? = null,
         @Query("endDate") endDate: String
-    ): List<GetExercisesResponse>
+    ): GetExercisesResponse
 
 
 
@@ -179,7 +179,7 @@ interface ApiService {
         @Query("limit") limit: Int = 20,
         @Query("startDate") startDate: String? = null,
         @Query("endDate") endDate: String
-    ): List<GetWorkoutTemplatesResponse>
+    ): GetWorkoutTemplatesResponse
 
     //========================================= workout =====================================
     @POST("workouts")
@@ -207,7 +207,7 @@ interface ApiService {
         @Query("limit") limit: Int = 5,
         @Query("startDate") startDate: String? = null,
         @Query("endDate") endDate: String
-    ): List<GetWorkoutsResponse>
+    ): GetWorkoutsResponse
 
 
 

@@ -1,6 +1,7 @@
 package pl.pollub.andrioid.gym.network
 
 import okhttp3.Authenticator
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
@@ -30,7 +31,7 @@ class TokenAuthenticator(
             val retrofit = Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:8000/api/")
                 .client(
-                    okhttp3.OkHttpClient.Builder()
+                    OkHttpClient.Builder()
                         .cookieJar(cookieJar)
                         .build()
                 )

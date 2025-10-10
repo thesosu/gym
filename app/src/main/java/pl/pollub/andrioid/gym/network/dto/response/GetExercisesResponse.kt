@@ -15,6 +15,8 @@ data class GetExercisesResponse(
 data class ExerciseDto(
     @Json(name = "id")
     val id: Int,
+    @Json(name = "deleted")
+    val deleted: Boolean,
     @Json(name = "name")
     val name: String,
     @Json(name = "description")

@@ -30,8 +30,6 @@ data class WorkoutResponse(
 data class WorkoutExerciseResponse(
     @Json(name = "id")
     val id: Int,
-    @Json(name = "name")
-    val name: String,
     @Json(name = "position")
     val position: Int,
     @Json(name = "sets")
@@ -43,5 +41,5 @@ data class WorkoutSetResponse(
     @Json(name = "reps")
     val reps: Int,
     @Json(name = "weight")
-    val weight: Double
+    val weight: Float
 )

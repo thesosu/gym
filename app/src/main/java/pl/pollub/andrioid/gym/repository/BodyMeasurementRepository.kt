@@ -9,22 +9,22 @@ import pl.pollub.andrioid.gym.db.dao.BodyMeasurementDao
 import pl.pollub.andrioid.gym.db.entity.BodyMeasurement
 import pl.pollub.andrioid.gym.db.entity.SyncQueue
 
-class BodyMeasurementRepository(context: Context):BodyMeasurementDao {
+class BodyMeasurementRepository(context: Context) {
 
     private val db = AppDb.getInstance(context)
     private val bodyMeasurementDao = db.bodyMeasurementDao()
     private val syncQueueDao = db.syncQueueDao()
     private val userDao = db.userDao()
 
-    override fun getAllBodyMeasurements(): Flow<List<BodyMeasurement>> {
+    fun getAllBodyMeasurements(): Flow<List<BodyMeasurement>> {
         return bodyMeasurementDao.getAllBodyMeasurements()
     }
 
-    override fun getBodyMeasurementById(id: Int): Flow<BodyMeasurement> {
+    fun getBodyMeasurementById(id: Int): Flow<BodyMeasurement> {
         return bodyMeasurementDao.getBodyMeasurementById(id)
     }
 
-    override suspend fun insertBodyMeasurements(bodyMeasurements: List<BodyMeasurement>): List<Long> = withContext(
+    suspend fun insertBodyMeasurements(bodyMeasurements: List<BodyMeasurement>): List<Long> = withContext(
         Dispatchers.IO){
         val newId = bodyMeasurementDao.insertBodyMeasurements(bodyMeasurements)
         val userId = userDao.getLoggedInUserId()
@@ -40,7 +40,7 @@ class BodyMeasurementRepository(context: Context):BodyMeasurementDao {
         newId
     }
 
-    override suspend fun insertBodyMeasurement(bodyMeasurements: BodyMeasurement): Long = withContext(Dispatchers.IO){
+    suspend fun insertBodyMeasurement(bodyMeasurements: BodyMeasurement): Long = withContext(Dispatchers.IO){
         val newId = bodyMeasurementDao.insertBodyMeasurement(bodyMeasurements)
         val userId = userDao.getLoggedInUserId()
 
@@ -53,7 +53,7 @@ class BodyMeasurementRepository(context: Context):BodyMeasurementDao {
         newId
     }
 
-    override suspend fun updateBodyMeasurement(bodyMeasurement: BodyMeasurement) = withContext(Dispatchers.IO){
+    suspend fun updateBodyMeasurement(bodyMeasurement: BodyMeasurement) = withContext(Dispatchers.IO){
         bodyMeasurementDao.updateBodyMeasurement(bodyMeasurement)
         val userId = userDao.getLoggedInUserId()
 
@@ -68,7 +68,7 @@ class BodyMeasurementRepository(context: Context):BodyMeasurementDao {
         }
     }
 
-    override suspend fun deleteBodyMeasurement(bodyMeasurement: BodyMeasurement) = withContext(Dispatchers.IO){
+    suspend fun deleteBodyMeasurement(bodyMeasurement: BodyMeasurement) = withContext(Dispatchers.IO){
         if(bodyMeasurement.globalId != null){
             val userId = userDao.getLoggedInUserId()
 
@@ -86,5 +86,9 @@ class BodyMeasurementRepository(context: Context):BodyMeasurementDao {
             }
         }
         bodyMeasurementDao.deleteBodyMeasurement(bodyMeasurement)
+    }
+
+    suspend fun deleteBodyMeasurementByGlobalId(id: Int) {
+        bodyMeasurementDao.deleteBodyMeasurementByGlobalId(id)
     }
 }

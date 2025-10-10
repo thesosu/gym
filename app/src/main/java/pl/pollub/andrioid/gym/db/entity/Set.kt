@@ -21,5 +21,5 @@ data class Set (
     @ColumnInfo(name = "workout_exercise_id") val workoutExerciseId: Int,
     @ColumnInfo(name = "reps") val reps: Int,
     @ColumnInfo(name = "weight") val weight: Float,
-    @ColumnInfo(name = "position") val position: Float,
+    @ColumnInfo(name = "position") val position: Int,
 )

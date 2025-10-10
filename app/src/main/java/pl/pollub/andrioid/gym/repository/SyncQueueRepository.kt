@@ -7,7 +7,15 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import pl.pollub.andrioid.gym.db.AppDb
 import pl.pollub.andrioid.gym.db.dao.SyncQueueDao
+import pl.pollub.andrioid.gym.db.entity.BodyMeasurement
+import pl.pollub.andrioid.gym.db.entity.Exercise
+import pl.pollub.andrioid.gym.db.entity.ExerciseMuscleGroup
+import pl.pollub.andrioid.gym.db.entity.Set
 import pl.pollub.andrioid.gym.db.entity.SyncQueue
+import pl.pollub.andrioid.gym.db.entity.Workout
+import pl.pollub.andrioid.gym.db.entity.WorkoutExercise
+import pl.pollub.andrioid.gym.db.entity.WorkoutTemplate
+import pl.pollub.andrioid.gym.db.entity.WorkoutTemplateExercise
 import pl.pollub.andrioid.gym.network.ApiClient
 import pl.pollub.andrioid.gym.network.dto.reguest.BodyMeasurementRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.ExerciseRequest
@@ -17,14 +25,19 @@ import pl.pollub.andrioid.gym.network.dto.reguest.WorkoutRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.WorkoutTemplatesRequest
 import java.time.Instant
 
-class SyncQueueRepository(context: Context): SyncQueueDao {
+class SyncQueueRepository(context: Context) {
     private val db = AppDb.getInstance(context)
     private val syncQueueDao = db.syncQueueDao()
     private val userDao = db.userDao()
     private val exerciseDao = db.exerciseDao()
+    private val exerciseMuscleGroupDao = db.exerciseMuscleGroupDao()
     private val bodyMeasurementDao = db.bodyMeasurementDao()
     private val workoutDao = db.workoutDao()
+    private val workoutExerciseDao = db.workoutExerciseDao()
     private val workoutTemplateDao = db.workoutTemplateDao()
+    private val workoutTemplateExerciseDao = db.workoutTemplateExerciseDao()
+
+    private val setDao = db.setDao()
     private val api = ApiClient.create(context)
 
     suspend fun sync()= withContext(Dispatchers.IO){
@@ -65,6 +78,163 @@ class SyncQueueRepository(context: Context): SyncQueueDao {
         userDao.updateLastSync(endDate)
 
     }
+    private suspend fun downloadExercises(startDate: String, endDate: String) {
+        var offset = 0
+        val limit = 50
+        var hasMore: Boolean
+        val userId = userDao.getLoggedInUserId()
+
+        do {
+            val response = api.getExercises(offset, limit, startDate, endDate)
+            hasMore = response.hasMore
+
+            for (exercise in response.data) {
+                if (exercise.deleted) {
+                    exerciseDao.deleteExerciseByGlobalId(exercise.id)
+                } else {
+                    val exerciseEntity = Exercise(
+                        globalId = exercise.id,
+                        name = exercise.name,
+                        description = exercise.description,
+                        userId = userId
+                    )
+                    val localExerciseId = exerciseDao.insertExercise(exerciseEntity)
+
+                    exercise.muscleGroups?.forEach { mgId ->
+                        exerciseMuscleGroupDao.insertExerciseMuscleGroup(
+                            ExerciseMuscleGroup(
+                                muscleGroupId = mgId,
+                                exerciseId = localExerciseId.toInt(),
+                            )
+                        )
+                    }
+                }
+            }
+            offset += limit
+        } while (hasMore)
+    }
+
+    private suspend fun downloadWorkouts(startDate: String, endDate: String) {
+        var offset = 0
+        val limit = 50
+        var hasMore: Boolean
+        val userId = userDao.getLoggedInUserId()
+
+        do {
+            val response = api.getUserWorkouts(offset, limit, startDate, endDate)
+            hasMore = response.hasMore
+
+            for (workout in response.data) {
+                if (workout.deleted) {
+                    workoutDao.deleteWorkoutByGlobalId(workout.id)
+                } else {
+                    val workoutEntity = Workout(
+                        globalId = workout.id,
+                        duration = workout.duration,
+                        date = workout.date,
+                        userId = userId,
+                        workoutTemplateId = workout.template,
+                    )
+                    val localWorkoutId = workoutDao.insertWorkout(workoutEntity)
+
+                    // ćwiczenia wewnątrz treningu
+                    for (ex in workout.exercises) {
+                        val localWorkoutExerciseId = workoutExerciseDao.insertWorkoutExercise(
+                            WorkoutExercise(
+                                position = ex.position,
+                                exerciseId = ex.id,
+                                workoutId = localWorkoutId.toInt()
+
+                            )
+                        )
+
+                        ex.sets.forEachIndexed { index, set ->
+                        setDao.insertSet(
+                            Set(
+                                workoutExerciseId = localWorkoutExerciseId.toInt(),
+                                reps = set.reps,
+                                weight = set.weight,
+                                position = index
+                            )
+                        )
+                        }
+
+                    }
+                }
+            }
+            offset += limit
+        } while (hasMore)
+    }
+
+    private suspend fun downloadBodyMeasurements(startDate: String, endDate: String) {
+        var offset = 0
+        val limit = 50
+        var hasMore: Boolean
+        val userId = userDao.getLoggedInUserId()
+
+        do {
+            val response = api.getUserMeasurements(offset, limit, startDate, endDate)
+            hasMore = response.hasMore
+
+            for (bm in response.data) {
+                if (bm.deleted) {
+                    bodyMeasurementDao.deleteBodyMeasurementByGlobalId(bm.id)
+                } else {
+                    val entity = BodyMeasurement(
+                        globalId = bm.id,
+                        weight = bm.weight,
+                        arm = bm.arm,
+                        forearm = bm.forearm,
+                        chest = bm.chest,
+                        waist = bm.waist,
+                        hips = bm.hips,
+                        thigh = bm.thigh,
+                        calf = bm.calf,
+                        date = bm.date,
+                        userId = userId
+                    )
+                    bodyMeasurementDao.insertBodyMeasurement(entity)
+                }
+            }
+            offset += limit
+        } while (hasMore)
+    }
+
+    private suspend fun downloadWorkoutTemplates(startDate: String, endDate: String) {
+        var offset = 0
+        val limit = 50
+        var hasMore: Boolean
+        val userId = userDao.getLoggedInUserId()
+        do {
+            val response = api.getUserWorkoutTemplates(offset, limit, startDate, endDate)
+            hasMore = response.hasMore
+
+            for (template in response.data) {
+                if (template.deleted) {
+                    workoutTemplateDao.deleteWorkoutTemplateByGlobalId(template.id)
+                } else {
+                    val workoutTemplate = WorkoutTemplate(
+                        globalId = template.id,
+                        name = template.name,
+                        userId = userId
+                    )
+                    val localTemplateId = workoutTemplateDao.insertWorkoutTemplate(workoutTemplate)
+                    template.exercises.forEachIndexed { index, eId ->
+                        workoutTemplateExerciseDao.insertWorkoutTemplateExercise(
+                            WorkoutTemplateExercise(
+                                workoutTemplateId = localTemplateId.toInt(),
+                                exerciseId = eId,
+                                position = index
+                            )
+                        )
+                    }
+                }
+            }
+            offset += limit
+        } while (hasMore)
+    }
+
+
 
     suspend fun uploadToServer(initialLastSync: String)= withContext(Dispatchers.IO){
         val userId = userDao.getLoggedInUserId()
@@ -386,32 +556,32 @@ class SyncQueueRepository(context: Context): SyncQueueDao {
 
     }
 
-    override suspend fun insertSyncQueue(syncQueue: SyncQueue): Long = withContext(Dispatchers.IO){
+    suspend fun insertSyncQueue(syncQueue: SyncQueue): Long = withContext(Dispatchers.IO){
         syncQueueDao.insertSyncQueue(syncQueue)
     }
 
-    override suspend fun insertSyncQueues(syncQueues: List<SyncQueue>): List<Long> = withContext(Dispatchers.IO){
+    suspend fun insertSyncQueues(syncQueues: List<SyncQueue>): List<Long> = withContext(Dispatchers.IO){
         syncQueueDao.insertSyncQueues(syncQueues)
     }
 
-    override suspend fun updateSyncQueue(syncQueue: SyncQueue) = withContext(Dispatchers.IO){
+    suspend fun updateSyncQueue(syncQueue: SyncQueue) = withContext(Dispatchers.IO){
         syncQueueDao.updateSyncQueue(syncQueue)
     }
 
-    override suspend fun deleteSyncQueue(syncQueue: SyncQueue) = withContext(Dispatchers.IO){
+    suspend fun deleteSyncQueue(syncQueue: SyncQueue) = withContext(Dispatchers.IO){
         syncQueueDao.deleteSyncQueue(syncQueue)
     }
 
 
-    override fun getSyncQueueById(id: Int?): SyncQueue {
+    fun getSyncQueueById(id: Int?): SyncQueue {
         return syncQueueDao.getSyncQueueById(id)
     }
 
-    override fun getSyncQueuesByUserId(id: Int?): List<SyncQueue> {
+    fun getSyncQueuesByUserId(id: Int?): List<SyncQueue> {
         return syncQueueDao.getSyncQueuesByUserId(id)
     }
 
-    override fun getSyncQueueByTableName(id: Int?, tn: String): SyncQueue? {
+    fun getSyncQueueByTableName(id: Int?, tn: String): SyncQueue? {
         return syncQueueDao.getSyncQueueByTableName(id,tn)
     }
 }

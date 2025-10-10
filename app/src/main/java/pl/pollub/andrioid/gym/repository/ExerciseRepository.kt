@@ -14,7 +14,7 @@ import pl.pollub.andrioid.gym.db.relationships.ExerciseWithMuscleGroups
 import pl.pollub.andrioid.gym.db.relationships.ExerciseWithWorkoutExercise
 import pl.pollub.andrioid.gym.db.relationships.ExerciseWithWorkoutTemplates
 
-class ExerciseRepository(context: Context):ExerciseDao, ExerciseMuscleGroupDao {
+class ExerciseRepository(context: Context) {
 
     private val db = AppDb.getInstance(context)
     private val exerciseDao = db.exerciseDao()
@@ -23,7 +23,7 @@ class ExerciseRepository(context: Context):ExerciseDao, ExerciseMuscleGroupDao {
     private val userDao = db.userDao()
 
 
-    override suspend fun insertExercise(exercise: Exercise): Long = withContext(Dispatchers.IO){
+    suspend fun insertExercise(exercise: Exercise): Long = withContext(Dispatchers.IO){
         val newId = exerciseDao.insertExercise(exercise)
         val userId = userDao.getLoggedInUserId()
         val q =SyncQueue(
@@ -35,7 +35,7 @@ class ExerciseRepository(context: Context):ExerciseDao, ExerciseMuscleGroupDao {
         newId
     }
 
-    override suspend fun insertExercises(exercises: List<Exercise>): List<Long> = withContext(Dispatchers.IO){
+    suspend fun insertExercises(exercises: List<Exercise>): List<Long> = withContext(Dispatchers.IO){
         val newId = exerciseDao.insertExercises(exercises)
         val userId = userDao.getLoggedInUserId()
 
@@ -50,7 +50,7 @@ class ExerciseRepository(context: Context):ExerciseDao, ExerciseMuscleGroupDao {
         newId
     }
 
-    override suspend fun updateExercise(exercise: Exercise) = withContext(Dispatchers.IO){
+    suspend fun updateExercise(exercise: Exercise) = withContext(Dispatchers.IO){
         exerciseDao.updateExercise(exercise)
         val userId = userDao.getLoggedInUserId()
         if(syncQueueDao.getSyncQueueByTableName(exercise.exerciseId,"exercises") == null){
@@ -64,7 +64,7 @@ class ExerciseRepository(context: Context):ExerciseDao, ExerciseMuscleGroupDao {
         }
     }
 
-    override suspend fun deleteExercise(exercise: Exercise) = withContext(Dispatchers.IO){
+    suspend fun deleteExercise(exercise: Exercise) = withContext(Dispatchers.IO){
         val userId = userDao.getLoggedInUserId()
 
         if(exercise.globalId != null){
@@ -84,47 +84,51 @@ class ExerciseRepository(context: Context):ExerciseDao, ExerciseMuscleGroupDao {
         exerciseDao.deleteExercise(exercise)
     }
 
-    override fun getExerciseById(id: Int): Flow<Exercise> {
+    suspend fun deleteExerciseByGlobalId(id: Int) {
+        exerciseDao.deleteExerciseByGlobalId(id)
+    }
+
+    fun getExerciseById(id: Int): Flow<Exercise> {
         return exerciseDao.getExerciseById(id)
     }
 
-    override fun getAllExercises(): Flow<List<Exercise>> {
+    fun getAllExercises(): Flow<List<Exercise>> {
         return exerciseDao.getAllExercises()
     }
 
-    override fun getMuscleGroupIdsForExercise(id: Int): List<Int> {
+    fun getMuscleGroupIdsForExercise(id: Int): List<Int> {
         return exerciseDao.getMuscleGroupIdsForExercise(id)
     }
 
-    override fun getExerciseWithMuscleGroups(id: Int): Flow<ExerciseWithMuscleGroups> {
+    fun getExerciseWithMuscleGroups(id: Int): Flow<ExerciseWithMuscleGroups> {
         return exerciseDao.getExerciseWithMuscleGroups(id)
     }
 
-    override fun getExerciseWithWorkoutExercises(id: Int): Flow<ExerciseWithWorkoutExercise> {
+    fun getExerciseWithWorkoutExercises(id: Int): Flow<ExerciseWithWorkoutExercise> {
         return exerciseDao.getExerciseWithWorkoutExercises(id)
     }
 
-    override fun getExerciseWithWorkoutTemplates(id: Int): Flow<ExerciseWithWorkoutTemplates> {
+    fun getExerciseWithWorkoutTemplates(id: Int): Flow<ExerciseWithWorkoutTemplates> {
         return exerciseDao.getExerciseWithWorkoutTemplates(id)
     }
 
-    override fun getAllExercisesWithMuscleGroups(): Flow<List<ExerciseWithMuscleGroups>> {
+    fun getAllExercisesWithMuscleGroups(): Flow<List<ExerciseWithMuscleGroups>> {
         return exerciseDao.getAllExercisesWithMuscleGroups()
     }
 
-    override fun getAllExercisesWithWorkoutExercises(): Flow<List<ExerciseWithWorkoutExercise>> {
+    fun getAllExercisesWithWorkoutExercises(): Flow<List<ExerciseWithWorkoutExercise>> {
         return exerciseDao.getAllExercisesWithWorkoutExercises()
     }
 
-    override fun getAllExercisesWithWorkoutTemplates(): Flow<List<ExerciseWithWorkoutTemplates>> {
+    fun getAllExercisesWithWorkoutTemplates(): Flow<List<ExerciseWithWorkoutTemplates>> {
         return exerciseDao.getAllExercisesWithWorkoutTemplates()
     }
 
-    override suspend fun insertExerciseMuscleGroup(exerciseMuscleGroup: ExerciseMuscleGroup) {
+    suspend fun insertExerciseMuscleGroup(exerciseMuscleGroup: ExerciseMuscleGroup) {
         exerciseMuscleGroupDao.insertExerciseMuscleGroup(exerciseMuscleGroup)
     }
 
-    override suspend fun insertAllExercisesMuscleGroups(exerciseMuscleGroups: List<ExerciseMuscleGroup>) {
+    suspend fun insertAllExercisesMuscleGroups(exerciseMuscleGroups: List<ExerciseMuscleGroup>) {
         exerciseMuscleGroupDao.insertAllExercisesMuscleGroups(exerciseMuscleGroups)
     }
 }
