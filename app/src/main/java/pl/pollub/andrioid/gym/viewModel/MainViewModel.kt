@@ -37,7 +37,7 @@ class MainViewModel(app: Application): AndroidViewModel(app) {
 
     fun add(){
         viewModelScope.launch {
-                syncQueueRepository.uploadToServer()
+                syncQueueRepository.sync()
 
         }
     }

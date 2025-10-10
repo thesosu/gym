@@ -27,6 +27,6 @@ data class SetRequest(
     @Json(name = "reps")
     val reps: Int,
     @Json(name = "weight")
-    val weight: Double
+    val weight: Float
 )
 

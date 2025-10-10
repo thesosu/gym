@@ -95,6 +95,10 @@ class WorkoutRepository(context: Context):WorkoutDao, WorkoutExerciseDao {
         return workoutDao.getWorkoutWithExercisesById(id)
     }
 
+    override fun getExercisesWithSetsForWorkout(id: Int): List<WorkoutExerciseWithSets> {
+        return workoutDao.getExercisesWithSetsForWorkout(id)
+    }
+
     override fun getAllWorkoutsWithExercises(): Flow<List<WorkoutWithWorkoutExercises>> {
         return workoutDao.getAllWorkoutsWithExercises()
     }

@@ -83,6 +83,10 @@ class WorkoutTemplateRepository(context: Context): WorkoutTemplateDao, WorkoutTe
         workoutTemplateDao.deleteWorkoutTemplate(workoutTemplate)
     }
 
+    override fun getExerciseIdsForTemplate(id: Int): List<Int> {
+        return workoutTemplateDao.getExerciseIdsForTemplate(id)
+    }
+
     override fun getWorkoutTemplateById(id: Int): Flow<WorkoutTemplate> {
         return workoutTemplateDao.getWorkoutTemplateById(id)
     }

@@ -27,6 +27,9 @@ interface WorkoutTemplateDao {
     @Delete
     suspend fun deleteWorkoutTemplate(workoutTemplate: WorkoutTemplate)
 
+    @Query("SELECT exercise_id FROM workout_template_exercise WHERE workout_template_id = :id ORDER BY position")
+    fun getExerciseIdsForTemplate(id: Int): List<Int>
+
     @Query("SELECT * FROM workout_templates WHERE workout_template_id = :id")
     fun  getWorkoutTemplateById(id: Int): Flow<WorkoutTemplate>
 

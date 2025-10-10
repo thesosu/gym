@@ -177,7 +177,7 @@ interface ApiService {
     suspend fun getUserWorkoutTemplates(
         @Query("offset") offset: Int = 0,
         @Query("limit") limit: Int = 20,
-        @Query("startDate") startDate: String? = null,  //ofset limit itd
+        @Query("startDate") startDate: String? = null,
         @Query("endDate") endDate: String
     ): List<GetWorkoutTemplatesResponse>
 

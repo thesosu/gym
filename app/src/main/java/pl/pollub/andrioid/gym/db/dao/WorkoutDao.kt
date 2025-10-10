@@ -9,6 +9,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import pl.pollub.andrioid.gym.db.entity.Workout
+import pl.pollub.andrioid.gym.db.relationships.WorkoutExerciseWithSets
 import pl.pollub.andrioid.gym.db.relationships.WorkoutWithWorkoutExercises
 
 @Dao
@@ -35,6 +36,10 @@ interface WorkoutDao {
     @Transaction
     @Query("SELECT * FROM workouts WHERE workout_id = :id")
     fun getWorkoutWithExercisesById(id: Int): Flow<WorkoutWithWorkoutExercises>
+
+    @Transaction
+    @Query("SELECT * FROM workout_exercises WHERE workout_id = :id order by position")
+    fun getExercisesWithSetsForWorkout(id: Int): List<WorkoutExerciseWithSets>
 
     @Transaction
     @Query("SELECT * FROM workouts")
