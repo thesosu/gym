@@ -80,7 +80,7 @@ class SyncQueueRepository(context: Context) {
     }
     private suspend fun downloadExercises(startDate: String, endDate: String) {
         var offset = 0
-        val limit = 50
+        val limit = 20
         var hasMore: Boolean
         val userId = userDao.getLoggedInUserId()
 
@@ -116,7 +116,7 @@ class SyncQueueRepository(context: Context) {
 
     private suspend fun downloadWorkouts(startDate: String, endDate: String) {
         var offset = 0
-        val limit = 50
+        val limit = 5
         var hasMore: Boolean
         val userId = userDao.getLoggedInUserId()
 
@@ -168,7 +168,7 @@ class SyncQueueRepository(context: Context) {
 
     private suspend fun downloadBodyMeasurements(startDate: String, endDate: String) {
         var offset = 0
-        val limit = 50
+        val limit = 20
         var hasMore: Boolean
         val userId = userDao.getLoggedInUserId()
 
@@ -202,7 +202,7 @@ class SyncQueueRepository(context: Context) {
 
     private suspend fun downloadWorkoutTemplates(startDate: String, endDate: String) {
         var offset = 0
-        val limit = 50
+        val limit = 20
         var hasMore: Boolean
         val userId = userDao.getLoggedInUserId()
         do {
