@@ -1,6 +1,7 @@
 package pl.pollub.andrioid.gym.repository
 
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -48,13 +49,13 @@ class UserRepository(context: Context){
                         email = null,
                         userName = username,
                         isLoggedIn = true,
-                        lastSync = null
                     )
                 )
             }
             true
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("UserRepository", "Login failed: ${e.message}")
+
             false
         }
     }
@@ -69,12 +70,11 @@ class UserRepository(context: Context){
 
                 email = null,
                 userName = username,
-                isLoggedIn = true,
-                lastSync = null
+                isLoggedIn = true
             ))
             true
         }catch (e: Exception){
-            e.printStackTrace()
+            Log.e("UserRepository", "Register failed: ${e.message}")
             false
         }
 
@@ -89,7 +89,7 @@ class UserRepository(context: Context){
 
             true
         }catch (e: Exception){
-            e.printStackTrace()
+            Log.e("UserRepository", "Change User Name failed: ${e.message}")
             false
         }
 
@@ -114,7 +114,7 @@ class UserRepository(context: Context){
             true
 
         }catch (e: Exception){
-            e.printStackTrace()
+            Log.e("UserRepository", "Change User password failed: ${e.message}")
             false
         }
     }
@@ -127,7 +127,7 @@ class UserRepository(context: Context){
             tokenManager.saveTemporaryToken(response.token)
             true
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("UserRepository", "Verify Reset Password Code failed: ${e.message}")
             false
         }
     }
@@ -141,7 +141,7 @@ class UserRepository(context: Context){
             tokenManager.clearTemporaryToken()
             true
         }catch (e: Exception){
-            e.printStackTrace()
+            Log.e("UserRepository", "Reset Password failed: ${e.message}")
             false
         }
     }
@@ -150,7 +150,7 @@ class UserRepository(context: Context){
             api.getEmailVerificationCode()
             true
         }catch (e: Exception){
-            e.printStackTrace()
+            Log.e("UserRepository", "Get Email Verification Code failed: ${e.message}")
             false
         }
     }
@@ -163,7 +163,7 @@ class UserRepository(context: Context){
             userDao.updateUser(user.copy(email = email))
             true
         }catch (e: Exception){
-            e.printStackTrace()
+            Log.e("UserRepository", "Add Email failed: ${e.message}")
             false
         }
         
@@ -175,7 +175,7 @@ class UserRepository(context: Context){
             ))
             true
         }catch (e: Exception){
-            e.printStackTrace()
+            Log.e("UserRepository", "Verify Email failed: ${e.message}")
             false
         }
     }
@@ -188,7 +188,7 @@ class UserRepository(context: Context){
             userDao.updateUser(user.copy(email = null))
             true
         }catch (e: Exception){
-            e.printStackTrace()
+            Log.e("UserRepository", "Delete User Email failed: ${e.message}")
             false
         }
     }
@@ -198,7 +198,7 @@ class UserRepository(context: Context){
             api.logout()
             true
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("UserRepository", "Logout failed: ${e.message}")
             false
         } finally {
             tokenManager.clearToken()

@@ -21,8 +21,8 @@ class WorkoutTemplateRepository(context: Context) {
     private val userDao = db.userDao()
 
     suspend fun insertWorkoutTemplate(workoutTemplate: WorkoutTemplate): Long = withContext(Dispatchers.IO){
-        val newId = workoutTemplateDao.insertWorkoutTemplate(workoutTemplate)
         val userId = userDao.getLoggedInUserId()
+        val newId = workoutTemplateDao.insertWorkoutTemplate(workoutTemplate.copy(userId = userId))
 
         val q = SyncQueue(
             tableName = "workoutTemplates",
@@ -34,8 +34,8 @@ class WorkoutTemplateRepository(context: Context) {
     }
 
     suspend fun insertAllWorkoutTemplates(workoutTemplates: List<WorkoutTemplate>): List<Long> = withContext(Dispatchers.IO){
-        val newId = workoutTemplateDao.insertAllWorkoutTemplates(workoutTemplates)
         val userId = userDao.getLoggedInUserId()
+        val newId = workoutTemplateDao.insertAllWorkoutTemplates(workoutTemplates.map { it.copy(userId = userId) })
 
         for(i in newId){
             val q = SyncQueue(
@@ -49,9 +49,9 @@ class WorkoutTemplateRepository(context: Context) {
     }
 
     suspend fun updateWorkoutTemplate(workoutTemplate: WorkoutTemplate) = withContext(Dispatchers.IO){
-        workoutTemplateDao.updateWorkoutTemplate(workoutTemplate)
+        val userId = userDao.getLoggedInUserId()
+        workoutTemplateDao.updateWorkoutTemplate(workoutTemplate.copy(userId = userId))
         if(syncQueueDao.getSyncQueueByTableName(workoutTemplate.workoutTemplateId,"workout_templates") == null){
-            val userId = userDao.getLoggedInUserId()
 
             val q = SyncQueue(
                 tableName = "workout_templates",

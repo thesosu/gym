@@ -23,6 +23,7 @@ import pl.pollub.andrioid.gym.network.dto.reguest.SetRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.WorkoutExerciseRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.WorkoutRequest
 import pl.pollub.andrioid.gym.network.dto.reguest.WorkoutTemplatesRequest
+import retrofit2.HttpException
 import java.time.Instant
 
 class SyncQueueRepository(context: Context) {
@@ -50,7 +51,12 @@ class SyncQueueRepository(context: Context) {
                 val lastSync = userDao.getLastSync()?.let(Instant::parse)
 
                 if (lastSync == null || lastSyncResponseInstant.isAfter(lastSync)) {
-                    downloadFromServer(lastSync.toString(),lastSyncResponse)
+                    try{downloadFromServer(lastSync?.toString(),lastSyncResponse)}
+                    catch (e: HttpException) {
+                        if (e.code() != 404) throw e
+                        Log.w("SyncRepository", "No data to download.")
+                    }
+
                 }
                 uploadToServer(lastSyncResponse)
 
@@ -68,7 +74,7 @@ class SyncQueueRepository(context: Context) {
         }
 
     }
-    suspend fun downloadFromServer(startDate: String, endDate: String)= withContext(Dispatchers.IO){
+    suspend fun downloadFromServer(startDate: String?, endDate: String)= withContext(Dispatchers.IO){
 
         downloadExercises(startDate, endDate)
         downloadWorkouts(startDate, endDate)
@@ -78,7 +84,7 @@ class SyncQueueRepository(context: Context) {
         userDao.updateLastSync(endDate)
 
     }
-    private suspend fun downloadExercises(startDate: String, endDate: String) {
+    private suspend fun downloadExercises(startDate: String?, endDate: String) {
         var offset = 0
         val limit = 20
         var hasMore: Boolean
@@ -114,7 +120,7 @@ class SyncQueueRepository(context: Context) {
         } while (hasMore)
     }
 
-    private suspend fun downloadWorkouts(startDate: String, endDate: String) {
+    private suspend fun downloadWorkouts(startDate: String?, endDate: String) {
         var offset = 0
         val limit = 5
         var hasMore: Boolean
@@ -166,7 +172,7 @@ class SyncQueueRepository(context: Context) {
         } while (hasMore)
     }
 
-    private suspend fun downloadBodyMeasurements(startDate: String, endDate: String) {
+    private suspend fun downloadBodyMeasurements(startDate: String?, endDate: String) {
         var offset = 0
         val limit = 20
         var hasMore: Boolean
@@ -200,7 +206,7 @@ class SyncQueueRepository(context: Context) {
         } while (hasMore)
     }
 
-    private suspend fun downloadWorkoutTemplates(startDate: String, endDate: String) {
+    private suspend fun downloadWorkoutTemplates(startDate: String?, endDate: String) {
         var offset = 0
         val limit = 20
         var hasMore: Boolean

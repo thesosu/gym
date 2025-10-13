@@ -24,8 +24,9 @@ class ExerciseRepository(context: Context) {
 
 
     suspend fun insertExercise(exercise: Exercise): Long = withContext(Dispatchers.IO){
-        val newId = exerciseDao.insertExercise(exercise)
         val userId = userDao.getLoggedInUserId()
+        val newId = exerciseDao.insertExercise(exercise.copy(userId = userId))
+
         val q =SyncQueue(
             tableName = "exercises",
             localId = newId.toInt(),
@@ -36,8 +37,8 @@ class ExerciseRepository(context: Context) {
     }
 
     suspend fun insertExercises(exercises: List<Exercise>): List<Long> = withContext(Dispatchers.IO){
-        val newId = exerciseDao.insertExercises(exercises)
         val userId = userDao.getLoggedInUserId()
+        val newId = exerciseDao.insertExercises(exercises.map { it.copy(userId = userId) })
 
         for(i in newId){
             val q = SyncQueue(
@@ -51,8 +52,9 @@ class ExerciseRepository(context: Context) {
     }
 
     suspend fun updateExercise(exercise: Exercise) = withContext(Dispatchers.IO){
-        exerciseDao.updateExercise(exercise)
         val userId = userDao.getLoggedInUserId()
+        exerciseDao.updateExercise(exercise.copy(userId = userId))
+
         if(syncQueueDao.getSyncQueueByTableName(exercise.exerciseId,"exercises") == null){
             val q = SyncQueue(
                 tableName = "exercises",

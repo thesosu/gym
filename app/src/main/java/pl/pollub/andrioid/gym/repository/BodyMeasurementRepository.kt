@@ -26,8 +26,8 @@ class BodyMeasurementRepository(context: Context) {
 
     suspend fun insertBodyMeasurements(bodyMeasurements: List<BodyMeasurement>): List<Long> = withContext(
         Dispatchers.IO){
-        val newId = bodyMeasurementDao.insertBodyMeasurements(bodyMeasurements)
         val userId = userDao.getLoggedInUserId()
+        val newId = bodyMeasurementDao.insertBodyMeasurements(bodyMeasurements.map { it.copy(userId = userId) })
 
         for(i in newId){
             val q = SyncQueue(
@@ -41,8 +41,8 @@ class BodyMeasurementRepository(context: Context) {
     }
 
     suspend fun insertBodyMeasurement(bodyMeasurements: BodyMeasurement): Long = withContext(Dispatchers.IO){
-        val newId = bodyMeasurementDao.insertBodyMeasurement(bodyMeasurements)
         val userId = userDao.getLoggedInUserId()
+        val newId = bodyMeasurementDao.insertBodyMeasurement(bodyMeasurements.copy(userId = userId))
 
         val q =SyncQueue(
             tableName = "body_measurements",
@@ -54,8 +54,8 @@ class BodyMeasurementRepository(context: Context) {
     }
 
     suspend fun updateBodyMeasurement(bodyMeasurement: BodyMeasurement) = withContext(Dispatchers.IO){
-        bodyMeasurementDao.updateBodyMeasurement(bodyMeasurement)
         val userId = userDao.getLoggedInUserId()
+        bodyMeasurementDao.updateBodyMeasurement(bodyMeasurement.copy(userId = userId))
 
         if(syncQueueDao.getSyncQueueByTableName(bodyMeasurement.bodyMeasurementId,"body_measurements") == null){
             val q = SyncQueue(
