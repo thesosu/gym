@@ -28,6 +28,9 @@ interface UserDao {
     @Query("UPDATE users SET last_sync = :lastSync WHERE isLoggedIn = 1")
     suspend fun updateLastSync(lastSync: String)
 
+    @Query("SELECT * FROM users WHERE isLoggedIn = 1 LIMIT 1")
+    suspend fun getLoggedInUser(): User
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUser(user: User): Long
 
@@ -42,6 +45,8 @@ interface UserDao {
 
     @Query("SELECT * FROM users WHERE user_id = :id")
     fun getUserById(id: Int): Flow<User>
+    @Query("SELECT * FROM users WHERE user_name = :username LIMIT 1")
+    suspend fun getUserByUsername(username: String): User?
 
     @Query("SELECT * FROM users")
     fun getAllUsers(): Flow<List<User>>

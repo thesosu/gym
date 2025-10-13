@@ -23,7 +23,7 @@ import androidx.room.PrimaryKey
 )
 data class Workout (
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "workout_id") val workoutId: Int = 0,
-    @ColumnInfo(name = "user_id") val userId: Int?,
+    @ColumnInfo(name = "user_id") val userId: Int? = null,
     @ColumnInfo(name = "workout_template_id") val workoutTemplateId: Int?,
     @ColumnInfo(name = "date") val date: String,
     @ColumnInfo(name = "duration") val duration: Int?,

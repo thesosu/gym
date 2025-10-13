@@ -18,7 +18,7 @@ import androidx.room.PrimaryKey
 )
 data class Exercise (
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "exercise_id") val exerciseId: Int = 0,
-    @ColumnInfo(name = "user_id") val userId: Int?,
+    @ColumnInfo(name = "user_id") val userId: Int? = null,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "description") val description: String?,
     @ColumnInfo(name = "global_id") var globalId:Int? =null

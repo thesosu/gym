@@ -35,30 +35,35 @@ class MainViewModel(app: Application): AndroidViewModel(app) {
     private val _exercise = MutableStateFlow<Exercise?>(null)
     val exercise = _exercise.asStateFlow()
 
+
+    private val _loginState = MutableStateFlow(false)
+    val loginState: StateFlow<Boolean> get() = _loginState
+    init {
+        viewModelScope.launch {
+            userRepository.getAllUsers().collect { users ->
+                val loggedIn = users.any { it.isLoggedIn }
+                _loginState.value = loggedIn
+            }
+        }
+    }
+
     fun add(){
         viewModelScope.launch {
-                syncQueueRepository.sync()
+            syncQueueRepository.sync()
 
         }
     }
-    private val _loginState =  MutableStateFlow(!userRepository.getToken().isNullOrEmpty())
-    val loginState: StateFlow<Boolean> get() = _loginState
-
     fun login(username: String, password: String) {
         viewModelScope.launch {
-            val success = userRepository.login(username, password)
-            _loginState.value = success
+            userRepository.login(username, password)
         }
-    }
-
-    fun getToken(): String? {
-        return userRepository.getToken()
     }
 
 
     fun logout() {
-        userRepository.logout()
-        _loginState.value = false
+        viewModelScope.launch {
+            userRepository.logout()
+        }
     }
 
     fun getAllExercises(): Flow<List<Exercise>> {

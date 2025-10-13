@@ -82,9 +82,8 @@ fun Greeting(mainViewModel:MainViewModel) {
             )
             Button(
                 onClick = {
-                    scope.launch {
                         mainViewModel.login(usernameState.value, passwordState.value)
-                    }
+
                 },
                 modifier = Modifier
                     .width(120.dp)
@@ -109,18 +108,11 @@ fun Greeting(mainViewModel:MainViewModel) {
             onClick = {
                 scope.launch {
 
-                    if (users.isEmpty()) {
-                        val uId = mainViewModel.insertUser(User( userName = "user", isLoggedIn = true, email = "email"))
-                        val eId = mainViewModel.insertExercise(Exercise(userId = uId.toInt(), name = " ex$time", description = "ok"))
-                        val mgId = mainViewModel.insertMuscleGroup(MuscleGroup(name = "mg $time"))
-                        mainViewModel.insertExerciseMuscleGroup(ExerciseMuscleGroup(muscleGroupId = mgId.toInt(), exerciseId = eId.toInt()))
-                    } else {
-                        val uId = users.first().userId
-                        val eId = mainViewModel.insertExercise(Exercise(userId = uId, name = " ex$time", description = "ok"))
+                        val eId = mainViewModel.insertExercise(Exercise( name = " ex$time", description = "ok"))
                         val mgId = mainViewModel.insertMuscleGroup(MuscleGroup(name = "mg $time"))
                         mainViewModel.insertExerciseMuscleGroup(ExerciseMuscleGroup(muscleGroupId = mgId.toInt(), exerciseId = eId.toInt()))
 
-                    }
+
                 }
 
             },

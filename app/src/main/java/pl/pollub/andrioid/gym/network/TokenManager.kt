@@ -9,6 +9,7 @@ class TokenManager(context: Context) {
     companion object {
         private const val PREFS_NAME = "secure_prefs"
         private const val TOKEN_KEY = "auth_token"
+        private const val TEMP_TOKEN_KEY = "temp_token"
     }
     private val masterKey = MasterKey.Builder(context)
         .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -32,5 +33,18 @@ class TokenManager(context: Context) {
     fun clearToken() {
         sharedPreferences.edit { remove(TOKEN_KEY) }
     }
+
+    fun saveTemporaryToken(token: String) {
+        sharedPreferences.edit { putString(TEMP_TOKEN_KEY, token) }
+    }
+
+    fun getTemporaryToken(): String? {
+        return sharedPreferences.getString(TEMP_TOKEN_KEY, null)
+    }
+
+    fun clearTemporaryToken() {
+        sharedPreferences.edit { remove(TEMP_TOKEN_KEY) }
+    }
+
 
 }

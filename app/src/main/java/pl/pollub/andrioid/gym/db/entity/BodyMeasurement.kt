@@ -18,7 +18,7 @@ import androidx.room.PrimaryKey
 )
 data class BodyMeasurement (
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "body_measurement_id") val bodyMeasurementId: Int = 0,
-    @ColumnInfo(name = "user_id") val userId: Int?,
+    @ColumnInfo(name = "user_id") val userId: Int? = null,
     @ColumnInfo(name = "date") val date: String,
     @ColumnInfo(name = "weight") val weight: Float?,
     @ColumnInfo(name = "waist") val waist: Float?,

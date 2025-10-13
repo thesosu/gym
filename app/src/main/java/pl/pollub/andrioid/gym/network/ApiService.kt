@@ -75,13 +75,14 @@ interface ApiService {
     suspend fun verifyEmail(@Body request: VerifyEmailRequest): VerifyEmailResponse
 
     @POST("auth/verify-reset-code")
-    suspend fun verifyResetPasswordCode(@Body request: VerifyResetCodeRequest): VerifyResetCodeResponse //pomyśleć jak zapisywać token
+    suspend fun verifyResetPasswordCode(@Body request: VerifyResetCodeRequest): VerifyResetCodeResponse
 
     @POST("auth/reset-password")
-    suspend fun resetPassword(@Body request: ResetPasswordRequest): ResetPasswordResponse
+    suspend fun resetPassword(@Header("Authorization") token: String,
+                              @Body request: ResetPasswordRequest): ResetPasswordResponse
 
     @POST("auth/forgot-password")
-    suspend fun forgotPassword(@Body request: ForgotPasswordRequest): ForgotPasswordResponse
+    suspend fun getEmailForgotPasswordCode(@Body request: ForgotPasswordRequest): ForgotPasswordResponse
 
     @PATCH("users/me/email")
     suspend fun addEmail(@Body request: AddEmailRequest): AddEmailResponse
