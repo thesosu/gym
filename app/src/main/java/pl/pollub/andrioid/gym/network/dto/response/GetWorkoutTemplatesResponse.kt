@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 class GetWorkoutTemplatesResponse (
     @Json(name = "has_more")
     val hasMore: Boolean,
-    @Json(name = "date")
+    @Json(name = "data")
     val data: List<WorkoutTemplateResponse>
 )
 @JsonClass(generateAdapter = true)

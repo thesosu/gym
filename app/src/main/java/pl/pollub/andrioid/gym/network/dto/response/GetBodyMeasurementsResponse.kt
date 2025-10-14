@@ -33,7 +33,7 @@ data class BodyMeasurementResponse(
 data class GetBodyMeasurementsResponse(
     @Json(name = "has_more")
     val hasMore: Boolean,
-    @Json(name = "date")
+    @Json(name = "data")
     val data: List<BodyMeasurementResponse>
 
 )

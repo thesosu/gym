@@ -27,8 +27,11 @@ interface SyncQueueDao {
     fun getSyncQueueById(id: Int?): SyncQueue
 
     @Query("SELECT * FROM sync_queue WHERE user_id = :id")
-    fun getSyncQueuesByUserId(id: Int?): List<SyncQueue>
+    fun getSyncQueuesByUserId(id: Int): List<SyncQueue>
 
     @Query("SELECT * FROM sync_queue WHERE local_id = :id AND table_name = :tn LIMIT 1")
     fun getSyncQueueByTableName(id: Int?, tn: String): SyncQueue?
+
+    @Query("SELECT * FROM sync_queue WHERE user_id IS NULL")
+    fun getSyncQueuesWithoutUser(): List<SyncQueue>
 }

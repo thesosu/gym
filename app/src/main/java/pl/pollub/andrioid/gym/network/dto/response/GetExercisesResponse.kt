@@ -7,7 +7,7 @@ import com.squareup.moshi.JsonClass
 data class GetExercisesResponse(
     @Json(name = "has_more")
     val hasMore: Boolean,
-    @Json(name = "date")
+    @Json(name = "data")
     val data: List<ExerciseDto>
 
 )

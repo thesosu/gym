@@ -67,11 +67,58 @@ class SyncQueueRepository(context: Context) {
 
     }
     private suspend fun assignSyncQueueToUser(userId: Int) {
-        val syncQueue = syncQueueDao.getSyncQueuesByUserId(null)
+        val syncQueue = syncQueueDao.getSyncQueuesWithoutUser()
+
         for(q in syncQueue){
-            q.userId =userId
-            syncQueueDao.updateSyncQueue(q)
+            syncQueueDao.updateSyncQueue(q.copy(userId = userId))
+            when (q.tableName) {
+                "exercises" -> {
+                    q.localId?.let { id ->
+                        val entity = exerciseDao.getExerciseById(id).firstOrNull()
+                        if (entity != null && entity.userId == null) {
+                            exerciseDao.updateExercise(entity.copy(userId = userId))
+                            Log.d("SyncRepository", "Assigned userId=$userId to Exercise localId=$id")
+                        }
+                    }
+                }
+
+                "body_measurements" -> {
+                    q.localId?.let { id ->
+                        val entity = bodyMeasurementDao.getBodyMeasurementById(id).firstOrNull()
+                        if (entity != null && entity.userId == null) {
+                            bodyMeasurementDao.updateBodyMeasurement(entity.copy(userId = userId))
+                            Log.d("SyncRepository", "Assigned userId=$userId to BodyMeasurement localId=$id")
+                        }
+                    }
+                }
+
+                "workouts" -> {
+                    q.localId?.let { id ->
+                        val entity = workoutDao.getWorkoutById(id).firstOrNull()
+                        if (entity != null && entity.userId == null) {
+                            workoutDao.updateWorkout(entity.copy(userId = userId))
+                            Log.d("SyncRepository", "Assigned userId=$userId to Workout localId=$id")
+                        }
+                    }
+                }
+
+                "workout_templates" -> {
+                    q.localId?.let { id ->
+                        val entity = workoutTemplateDao.getWorkoutTemplateById(id).firstOrNull()
+                        if (entity != null && entity.userId == null) {
+                            workoutTemplateDao.updateWorkoutTemplate(entity.copy(userId = userId))
+                            Log.d("SyncRepository", "Assigned userId=$userId to WorkoutTemplate localId=$id")
+                        }
+                    }
+                }
+
+                else -> {
+                    Log.w("SyncRepository", "Unknown table in SyncQueue: ${q.tableName}")
+                }
+            }
         }
+
+        Log.d("SyncRepository", "Assigned userId=$userId to ${syncQueue.size} SyncQueue records and related local entities.")
 
     }
     suspend fun downloadFromServer(startDate: String?, endDate: String)= withContext(Dispatchers.IO){
@@ -583,7 +630,7 @@ class SyncQueueRepository(context: Context) {
         return syncQueueDao.getSyncQueueById(id)
     }
 
-    fun getSyncQueuesByUserId(id: Int?): List<SyncQueue> {
+    fun getSyncQueuesByUserId(id: Int): List<SyncQueue> {
         return syncQueueDao.getSyncQueuesByUserId(id)
     }
 
