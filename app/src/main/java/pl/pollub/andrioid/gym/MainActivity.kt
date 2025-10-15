@@ -108,7 +108,7 @@ fun Greeting(mainViewModel:MainViewModel) {
             onClick = {
                 scope.launch {
 
-                        val eId = mainViewModel.insertExercise(Exercise( name = " ex$time", description = "ok"))
+                        val eId = mainViewModel.insertExercise(Exercise( name = " ex$time", description = "ok"),listOf(1))
                         val mgId = mainViewModel.insertMuscleGroup(MuscleGroup(name = "mg $time"))
                         mainViewModel.insertExerciseMuscleGroup(ExerciseMuscleGroup(muscleGroupId = mgId.toInt(), exerciseId = eId.toInt()))
 

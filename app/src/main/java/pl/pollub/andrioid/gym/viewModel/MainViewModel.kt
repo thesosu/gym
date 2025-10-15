@@ -69,9 +69,12 @@ class MainViewModel(app: Application): AndroidViewModel(app) {
     fun getAllExercises(): Flow<List<Exercise>> {
         return exerciseRepository.getAllExercises()
     }
-    suspend fun insertExercise(exercise: Exercise): Long {
+    suspend fun insertExercise(exercise: Exercise,muscleGroupIds: List<Int>): Long {
 
-        return exerciseRepository.insertExercise(exercise)
+        return exerciseRepository.insertExercise(
+            exercise,
+            muscleGroupIds
+        )
 
     }
     suspend fun insertMuscleGroup(muscleGroup: MuscleGroup): Long {

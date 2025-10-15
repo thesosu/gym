@@ -4,6 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import pl.pollub.andrioid.gym.db.dao.BodyMeasurementDao
 import pl.pollub.andrioid.gym.db.dao.ExerciseDao
 import pl.pollub.andrioid.gym.db.dao.ExerciseMuscleGroupDao
@@ -56,15 +60,46 @@ abstract class AppDatabase: RoomDatabase() {
 
 }
 object AppDb{
+    @Volatile
     private var db: AppDatabase? = null
     fun getInstance(context: Context): AppDatabase {
-        if(db == null){
-            db = Room.databaseBuilder(
-                context,
-                AppDatabase::class.java, "gym"
-            ).build()
-
+        return db ?: synchronized(this) {
+            val instance = Room.databaseBuilder(
+                context.applicationContext,
+                AppDatabase::class.java,
+                "gym"
+            )
+                .addCallback(AppDatabaseCallback(context))
+                .build()
+            db = instance
+            instance
         }
-        return db!!
+    }
+}
+
+class AppDatabaseCallback(private val context: Context): RoomDatabase.Callback() {
+    override fun onCreate(db: SupportSQLiteDatabase) {
+        super.onCreate(db)
+        CoroutineScope(Dispatchers.IO).launch {
+            prepopulateDatabase(context)
+        }
+    }
+
+    private suspend fun prepopulateDatabase(context: Context) {
+        val database = AppDb.getInstance(context)
+        val muscleGroupDao = database.muscleGroupDao()
+
+        val groups = listOf(
+            MuscleGroup(name = "Klatka piersiowa"),
+            MuscleGroup(name = "Plecy"),
+            MuscleGroup(name = "Nogi"),
+            MuscleGroup(name = "Ramiona"),
+            MuscleGroup(name = "Biceps"),
+            MuscleGroup(name = "Triceps")
+        )
+
+         muscleGroupDao.insertMuscleGroups(groups)
+
+
     }
 }
