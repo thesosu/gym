@@ -79,9 +79,7 @@ class MainViewModel(app: Application): AndroidViewModel(app) {
         return muscleGroupRepository.insertMuscleGroup(muscleGroup)
 
     }
-    suspend fun insertUser(user: User): Long{
-        return userRepository.insertUser(user)
-    }
+
     suspend fun insertExerciseMuscleGroup(exerciseMuscleGroup: ExerciseMuscleGroup){
         exerciseRepository.insertExerciseMuscleGroup(exerciseMuscleGroup)
     }
